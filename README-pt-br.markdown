@@ -6,7 +6,7 @@ Um plugin do VRaptor que permite a criação rápida e fácil de testes.
 
 Para instalar use:
 
-	vraptor install vraptor-test
+	vraptor plugin vraptor-test
 	
 Ou adicione no seu pom:
 

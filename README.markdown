@@ -6,7 +6,7 @@ A VRaptor plugin that allows you to quickly create integration or system tests.
 
 You can install it by doing:
 
-	vraptor install vraptor-test
+	vraptor plugin vraptor-test
 	
 Or add to your pom:
 
