@@ -6,6 +6,11 @@
 	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
+	<parent>
+	    <groupId>org.sonatype.oss</groupId>
+	    <artifactId>oss-parent</artifactId>
+	    <version>7</version>
+	</parent>
 	<scm>
 		<url>http://github.com/caelum/vraptor-test</url>
 		<connection>scm:git:git://github.com/caelum/vraptor-test</connection>
