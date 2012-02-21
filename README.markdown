@@ -24,7 +24,7 @@ Or simply copy all jars to your classpath.
 Create a test case such as the following, that starts the server just once:
 
 	public interface Server {
-		private static final RealVRaptor VRAPTOR = new RealVRaptor(new File("src/main/webapp")); 
+		static final RealVRaptor VRAPTOR = new RealVRaptor(new File("src/main/webapp")); 
 	}
 	
 	public class IndexTest implements Server {
