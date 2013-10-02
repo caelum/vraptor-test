@@ -14,7 +14,7 @@ import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
 public class VRaptorIntegration {
 
 	private static CdiContainer cdiContainer;
-	private static CDIBasedContainer cdiBasedContainer;
+	protected static CDIBasedContainer cdiBasedContainer;
 
 	@BeforeClass
 	public static void startCDIContainer(){
@@ -40,7 +40,7 @@ public class VRaptorIntegration {
 		cdiContainer.stopSession();
 	}
 	
-	protected static VRaptorNavigation navigate(){
+	protected static VRaptorNavigation navigate(){		
 		return cdiBasedContainer.instanceFor(VRaptorNavigation.class);
 	}
 		

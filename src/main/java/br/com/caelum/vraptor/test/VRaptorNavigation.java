@@ -1,6 +1,5 @@
 package br.com.caelum.vraptor.test;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
