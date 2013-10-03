@@ -31,9 +31,10 @@ public class VRaptorNavigation {
 		filter.init(new MockFilterConfig());
 	}
 	
-	public VRaptorTestResult to(String url,HttpMethod httpMethod) {
+	public VRaptorTestResult to(String url,HttpMethod httpMethod,Parameters parameters) {
 		MockServletContext context = new MockServletContext();		
-		MockHttpServletRequest request = new MockHttpServletRequest(context,httpMethod.toString(),url);		
+		MockHttpServletRequest request = new MockHttpServletRequest(context,httpMethod.toString(),url);
+		parameters.fill(request);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		MockFilterChain chain = new MockFilterChain();
 		try {	
@@ -45,11 +46,19 @@ public class VRaptorNavigation {
 	}
 	
 	public VRaptorTestResult get(String url){
-		return to(url,HttpMethod.GET);
+		return get(url,new Parameters());
 	}
 	
+	public VRaptorTestResult get(String url, Parameters parameters) {
+		return to(url,HttpMethod.GET,parameters);
+	}
+
 	public VRaptorTestResult post(String url){
-		return to(url,HttpMethod.POST);
+		return post(url,new Parameters());
+	}
+
+	public VRaptorTestResult post(String url, Parameters parameters) {
+		return to(url,HttpMethod.POST,parameters);
 	}
 
 }

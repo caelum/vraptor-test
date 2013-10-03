@@ -2,6 +2,8 @@ package br.com.caelum.vraptor.test;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
 import javax.servlet.AsyncContext;
@@ -80,6 +82,28 @@ public class VRaptorTestRequest extends MockHttpServletRequest implements Mutabl
 		// TODO Auto-generated method stub
 		return this;
 	}
+	
+	@Override
+	public String getParameter(String name) {
+		return mutableRequest.getParameter(name);
+	}
+	
+	@Override
+	public Enumeration<String> getParameterNames() {
+		return mutableRequest.getParameterNames();
+	}
+	
+	@Override
+	public String[] getParameterValues(String name) {
+		return mutableRequest.getParameterValues(name);
+	}
+	
+	@Override
+	public Map<String, String[]> getParameterMap() {
+		return mutableRequest.getParameterMap();
+	}
+	
+	
 	
 	@Override
 	public RequestDispatcher getRequestDispatcher(String path) {
