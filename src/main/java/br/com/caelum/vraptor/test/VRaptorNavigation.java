@@ -15,6 +15,7 @@ import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
+import br.com.caelum.vraptor.controller.HttpMethod;
 
 @ApplicationScoped
 public class VRaptorNavigation {
@@ -30,9 +31,9 @@ public class VRaptorNavigation {
 		filter.init(new MockFilterConfig());
 	}
 	
-	public VRaptorTestResult to(String url) {
-		MockServletContext context = new MockServletContext();
-		MockHttpServletRequest request = new MockHttpServletRequest(context,"GET",url);		
+	public VRaptorTestResult to(String url,HttpMethod httpMethod) {
+		MockServletContext context = new MockServletContext();		
+		MockHttpServletRequest request = new MockHttpServletRequest(context,httpMethod.toString(),url);		
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		MockFilterChain chain = new MockFilterChain();
 		try {	
@@ -41,6 +42,14 @@ public class VRaptorNavigation {
 			throw new RuntimeException(e);
 		}
 		return new VRaptorTestResult(result.get(),response);
+	}
+	
+	public VRaptorTestResult get(String url){
+		return to(url,HttpMethod.GET);
+	}
+	
+	public VRaptorTestResult post(String url){
+		return to(url,HttpMethod.POST);
 	}
 
 }

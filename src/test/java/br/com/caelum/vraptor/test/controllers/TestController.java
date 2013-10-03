@@ -3,6 +3,7 @@ package br.com.caelum.vraptor.test.controllers;
 import javax.inject.Inject;
 
 import br.com.caelum.vraptor.Controller;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
 
 @Controller
@@ -19,6 +20,7 @@ public class TestController {
 		result.forwardTo(this).test();
 	}
 	
+	@Post
 	public void test3(){
 		result.redirectTo(RedirectedController.class).test();
 	}
