@@ -36,7 +36,7 @@ public class VRaptorIntegration {
 	
 	@After
 	public void endOfRequest(){
-		cdiContainer.startRequest();
+		cdiContainer.stopRequest();
 		cdiContainer.stopSession();
 	}
 	

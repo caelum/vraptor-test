@@ -12,4 +12,10 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration{
 		assertEquals("vraptor",result.getObject("name"));
 	}
 	
+	@Test
+	public void shouldExecuteLogicForward() throws Exception {
+		VRaptorTestResult result = navigate().to("/test/test2");
+		assertEquals("/WEB-INF/jsp/test/test.jsp",result.getPagePath());
+	}
+	
 }
