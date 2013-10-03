@@ -4,24 +4,33 @@ import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.springframework.mock.web.MockHttpServletResponse;
+
 import br.com.caelum.vraptor.Result;
 
 @Vetoed
 public class VRaptorTestResult {
 
 	private Result result;
-	private String pagePath;
 	private Map<String, Object> values;
+	private MockHttpServletResponse response;
 
-	public VRaptorTestResult(Result result, String pagePath) {
+	public VRaptorTestResult(Result result, MockHttpServletResponse response) {
 		super();
 		this.result = result;
-		this.pagePath = pagePath;
+		this.response = response;
 		this.values = result.included();
 	}
 	
-	public String getPagePath() {
-		return pagePath;
+	/**
+	 * 
+	 * @return redirected url or jsp path
+	 */
+	public String getLastPath() {
+		if(response.getRedirectedUrl()!=null){
+			return response.getRedirectedUrl();
+		}
+		return response.getForwardedUrl();
 	}
 	
 	public boolean isKeyIncluded(String key){

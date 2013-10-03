@@ -18,4 +18,8 @@ public class TestController {
 	public void test2(){
 		result.forwardTo(this).test();
 	}
+	
+	public void test3(){
+		result.redirectTo(RedirectedController.class).test();
+	}
 }

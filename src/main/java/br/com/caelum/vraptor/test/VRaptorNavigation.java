@@ -36,12 +36,11 @@ public class VRaptorNavigation {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		MockFilterChain chain = new MockFilterChain();
 		try {	
-			filter.doFilter(request,response,chain);
-			
+			filter.doFilter(request,response,chain);			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return new VRaptorTestResult(result.get(),response.getForwardedUrl());
+		return new VRaptorTestResult(result.get(),response);
 	}
 
 }
