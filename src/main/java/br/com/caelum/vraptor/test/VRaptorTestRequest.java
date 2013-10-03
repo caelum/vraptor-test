@@ -78,7 +78,7 @@ public class VRaptorTestRequest extends MockHttpServletRequest implements Mutabl
 	@Override
 	public HttpServletRequest getOriginalRequest() {
 		// TODO Auto-generated method stub
-		return mutableRequest.getOriginalRequest();
+		return this;
 	}
 	
 	@Override
