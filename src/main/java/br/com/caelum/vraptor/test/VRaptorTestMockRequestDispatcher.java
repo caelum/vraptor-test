@@ -17,7 +17,7 @@ public class VRaptorTestMockRequestDispatcher extends MockRequestDispatcher{
 	
 	@Override
 	protected MockHttpServletResponse getMockHttpServletResponse(ServletResponse response) {
-		//probably there is inconsistency in forwards inside VRaptor.
+		//probably there is inconsistency in forwards inside VRaptor. 
 		if(response instanceof MutableResponse){
 			return super.getMockHttpServletResponse(((MutableResponse)response).getOriginalResponse());
 		}

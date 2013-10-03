@@ -1,12 +1,15 @@
 package br.com.caelum.vraptor.test;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration{
 		
 	@Test
 	public void shouldExecuteDefaultForward() throws Exception {
-		String page = navigate().to("/test/test");
-		System.out.println(page);
+		VRaptorTestResult result = navigate().to("/test/test");
+		assertEquals("/WEB-INF/jsp/test/test.jsp",result.getPagePath());
+		assertEquals("vraptor",result.getObject("name"));
 	}
 	
 }

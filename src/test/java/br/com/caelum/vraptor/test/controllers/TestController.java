@@ -12,7 +12,7 @@ public class TestController {
 	private Result result;
 
 	public void test(){
-		System.out.println("hi!, i am here");
+		result.include("name","vraptor");
 	}
 	
 	public void test2(){
