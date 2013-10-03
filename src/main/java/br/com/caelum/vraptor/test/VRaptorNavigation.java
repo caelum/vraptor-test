@@ -25,14 +25,14 @@ public class VRaptorNavigation {
 	@Inject	
 	@RequestScoped
 	private Instance<Result> result;
+	private MockServletContext context = new MockServletContext();
 	
 	@PostConstruct
 	private void init() throws ServletException{
-		filter.init(new MockFilterConfig());
+		filter.init(new MockFilterConfig(context));
 	}
 	
-	public VRaptorTestResult to(String url,HttpMethod httpMethod,Parameters parameters) {
-		MockServletContext context = new MockServletContext();		
+	public VRaptorTestResult to(String url,HttpMethod httpMethod,Parameters parameters) {				
 		MockHttpServletRequest request = new MockHttpServletRequest(context,httpMethod.toString(),url);
 		parameters.fill(request);
 		MockHttpServletResponse response = new MockHttpServletResponse();
