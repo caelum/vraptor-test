@@ -7,7 +7,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import br.com.caelum.vraptor.ioc.Container;
 import br.com.caelum.vraptor.ioc.cdi.CDIBasedContainer;
 import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
 
@@ -29,19 +28,19 @@ public class VRaptorIntegration {
 	}
 	
 	@Before
-	public void newRequest(){
-		cdiContainer.startRequest();
+	public void startOfInteraction(){
 		cdiContainer.startSession();		
 	}
 	
 	@After
-	public void endOfRequest(){
-		cdiContainer.stopRequest();
+	public void endOfInteraction(){
 		cdiContainer.stopSession();
 	}
 	
-	protected static VRaptorNavigation navigate(){		
-		return cdiBasedContainer.instanceFor(VRaptorNavigation.class);
+	protected UserFlow navigate(){
+		VRaptorNavigation navigation = cdiBasedContainer.instanceFor(VRaptorNavigation.class);
+		navigation.setContainer(cdiContainer);
+		return navigation.start();
 	}
 		
 }
