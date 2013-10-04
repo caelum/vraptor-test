@@ -7,15 +7,12 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
-import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
-import br.com.caelum.vraptor.controller.HttpMethod;
+import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
 
 @ApplicationScoped
 public class VRaptorNavigation {
@@ -26,39 +23,23 @@ public class VRaptorNavigation {
 	@RequestScoped
 	private Instance<Result> result;
 	private MockServletContext context = new MockServletContext();
+	private CdiContainer cdiContainer;
 	
 	@PostConstruct
 	private void init() throws ServletException{
 		filter.init(new MockFilterConfig(context));
 	}
 	
-	public VRaptorTestResult to(String url,HttpMethod httpMethod,Parameters parameters) {				
-		MockHttpServletRequest request = new MockHttpServletRequest(context,httpMethod.toString(),url);
-		parameters.fill(request);
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockFilterChain chain = new MockFilterChain();
-		try {	
-			filter.doFilter(request,response,chain);			
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+	public UserFlow start(){
+		if(this.cdiContainer==null){
+			throw new IllegalStateException("Container must be set to enable scope control");
 		}
-		return new VRaptorTestResult(result.get(),response);
+		return new UserFlow(filter,cdiContainer,context,result);
 	}
 	
-	public VRaptorTestResult get(String url){
-		return get(url,new Parameters());
-	}
-	
-	public VRaptorTestResult get(String url, Parameters parameters) {
-		return to(url,HttpMethod.GET,parameters);
-	}
-
-	public VRaptorTestResult post(String url){
-		return post(url,new Parameters());
-	}
-
-	public VRaptorTestResult post(String url, Parameters parameters) {
-		return to(url,HttpMethod.POST,parameters);
+	public void setContainer(CdiContainer cdiContainer) {
+		this.cdiContainer = cdiContainer;
+		
 	}
 
 }
