@@ -25,17 +25,7 @@ public class VRaptorIntegration {
 	@AfterClass
 	public static void shutdownCDIContainer() {
 		cdiContainer.shutdown();
-	}
-	
-	@Before
-	public void startOfInteraction(){
-		cdiContainer.startSession();		
-	}
-	
-	@After
-	public void endOfInteraction(){
-		cdiContainer.stopSession();
-	}
+	}	
 	
 	protected UserFlow navigate(){
 		VRaptorNavigation navigation = cdiBasedContainer.instanceFor(VRaptorNavigation.class);

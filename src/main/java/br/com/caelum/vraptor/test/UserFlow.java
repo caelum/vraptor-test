@@ -37,23 +37,32 @@ public class UserFlow {
 
 	public VRaptorTestResult execute() {
 		try {
+			cdiContainer.startSession();
 			HttpSession session = null;
 			VRaptorTestResult result = null;
 			for (UserRequest<VRaptorTestResult> req : flows) {
-				result = req.call(session);
-				session = result.getCurrentSession();
+				cdiContainer.startRequest();				
+				try{
+					result = req.call(session);
+					session = result.getCurrentSession();
+				}
+				finally{
+					cdiContainer.stopRequest();
+				}
 			}
 			return result;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+		finally {
+			cdiContainer.stopSession();
 		}
 	}
 
 	public UserFlow to(final String url,final HttpMethod httpMethod,final Parameters parameters) {
 		flows.add(new UserRequest<VRaptorTestResult>() {
 			@Override
-			public VRaptorTestResult call(HttpSession session) {
-				cdiContainer.startRequest();
+			public VRaptorTestResult call(HttpSession session) {				
 				MockHttpServletRequest request = new MockHttpServletRequest(context,httpMethod.toString(),url);
 				parameters.fill(request);
 				if(session!=null){
@@ -67,9 +76,6 @@ public class UserFlow {
 					return new VRaptorTestResult(vraptorResult,response,request);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
-				}
-				finally {
-					cdiContainer.stopRequest();
 				}
 			}
 		});
