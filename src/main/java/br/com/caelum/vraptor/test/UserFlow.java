@@ -10,7 +10,6 @@ import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
@@ -21,7 +20,6 @@ import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
 
 public class UserFlow {
 
-	private UserRequest<VRaptorTestResult> callable;
 	private List<UserRequest<VRaptorTestResult>> flows = new ArrayList<>();
 	private MockServletContext context;
 	protected CdiContainer cdiContainer;
