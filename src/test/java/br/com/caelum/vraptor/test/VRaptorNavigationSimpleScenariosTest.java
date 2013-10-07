@@ -1,5 +1,9 @@
 package br.com.caelum.vraptor.test;
 
+import javax.validation.Validator;
+import javax.validation.executable.ExecutableValidator;
+
+import org.jboss.weld.environment.tomcat7.Tomcat7Container;
 import org.junit.Test;
 
 import br.com.caelum.vraptor.test.models.Task;
@@ -41,6 +45,12 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		VRaptorTestResult result = navigate().post("/test/test5").get("/test/test6").execute();
 		Task task = result.getObject("taskInSession");
 		assertEquals("test",task.getDescription());
-	}	
+	}
+	
+	@Test
+	public void shouldValidateObject(){
+		navigate().post("/test/test7", Parameters.initWith("task.description", "test").add("task.difficulty", 10))
+				.execute();		
+	}
 
 }

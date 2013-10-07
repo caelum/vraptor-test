@@ -2,6 +2,7 @@ package br.com.caelum.vraptor.test.controllers;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -46,4 +47,9 @@ public class TestController {
 	public void test6(){
 		result.include("taskInSession",session.getAttribute("task"));
 	}
+	
+	@Post
+	public void test7(@Valid Task task){
+		
+	}	
 }
