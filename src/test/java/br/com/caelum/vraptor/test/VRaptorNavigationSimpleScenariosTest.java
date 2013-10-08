@@ -7,6 +7,8 @@ import javax.enterprise.inject.Specializes;
 
 import org.junit.Test;
 
+import br.com.caelum.vraptor.test.http.Parameters;
+import br.com.caelum.vraptor.test.jspsupport.JspResolver;
 import br.com.caelum.vraptor.test.models.Task;
 
 @Specializes

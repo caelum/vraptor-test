@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.test;
+package br.com.caelum.vraptor.test.requestflow;
 
 import javax.servlet.http.HttpSession;
 

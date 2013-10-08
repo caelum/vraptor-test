@@ -50,11 +50,11 @@ public class VRaptorTestResult {
 		return request.getSession();
 	}
 	
-	MockHttpServletRequest getRequest() {
+	public MockHttpServletRequest getRequest() {
 		return request;
 	}
 	
-	MockHttpServletResponse getResponse() {
+	public MockHttpServletResponse getResponse() {
 		return response;
 	}
 	

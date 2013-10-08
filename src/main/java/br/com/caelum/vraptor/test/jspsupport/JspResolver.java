@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.test;
+package br.com.caelum.vraptor.test.jspsupport;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +17,8 @@ import org.apache.jasper.runtime.HttpJspBase;
 import org.apache.tomcat.InstanceManager;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
+
+import br.com.caelum.vraptor.test.VRaptorTestResult;
 
 public class JspResolver {
 	

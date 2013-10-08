@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.test;
+package br.com.caelum.vraptor.test.http;
 
 import java.util.ArrayList;
 import java.util.List;

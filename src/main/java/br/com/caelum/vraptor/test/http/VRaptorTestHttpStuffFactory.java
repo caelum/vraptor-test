@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.test;
+package br.com.caelum.vraptor.test.http;
 
 import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;

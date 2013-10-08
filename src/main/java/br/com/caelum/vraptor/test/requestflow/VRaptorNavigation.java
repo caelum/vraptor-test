@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.test;
+package br.com.caelum.vraptor.test.requestflow;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -13,6 +13,7 @@ import org.springframework.mock.web.MockServletContext;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
 import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
+import br.com.caelum.vraptor.test.jspsupport.JspResolver;
 
 @ApplicationScoped
 public class VRaptorNavigation {

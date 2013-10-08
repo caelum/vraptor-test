@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.test;
+package br.com.caelum.vraptor.test.requestflow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,9 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
 import br.com.caelum.vraptor.controller.HttpMethod;
 import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
+import br.com.caelum.vraptor.test.VRaptorTestResult;
+import br.com.caelum.vraptor.test.http.Parameters;
+import br.com.caelum.vraptor.test.jspsupport.JspResolver;
 
 
 public class UserFlow {
