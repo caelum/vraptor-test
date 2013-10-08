@@ -1,6 +1,5 @@
 package br.com.caelum.vraptor.test;
 
-import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.CDI;
 
 import org.junit.AfterClass;
@@ -8,7 +7,6 @@ import org.junit.BeforeClass;
 
 import br.com.caelum.vraptor.ioc.cdi.CDIBasedContainer;
 import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
-import br.com.caelum.vraptor.test.jspsupport.JspResolver;
 import br.com.caelum.vraptor.test.requestflow.UserFlow;
 import br.com.caelum.vraptor.test.requestflow.VRaptorNavigation;
 
