@@ -24,6 +24,8 @@ public class VRaptorNavigation {
 	private Instance<Result> result;
 	private MockServletContext context = new MockServletContext();
 	private CdiContainer cdiContainer;
+	@Inject	
+	private JspResolver jspResolver;
 	
 	@PostConstruct
 	private void init() throws ServletException{
@@ -34,12 +36,11 @@ public class VRaptorNavigation {
 		if(this.cdiContainer==null){
 			throw new IllegalStateException("Container must be set to enable scope control");
 		}
-		return new UserFlow(filter,cdiContainer,context,result, new JspResolver("src/test/resources/WebContent"));
+		return new UserFlow(filter,cdiContainer,context,result, jspResolver);
 	}
 	
 	public void setContainer(CdiContainer cdiContainer) {
 		this.cdiContainer = cdiContainer;
-		
 	}
 
 }

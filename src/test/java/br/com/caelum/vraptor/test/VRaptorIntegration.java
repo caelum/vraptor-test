@@ -1,5 +1,6 @@
 package br.com.caelum.vraptor.test;
 
+import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.CDI;
 
 import org.junit.AfterClass;
@@ -8,7 +9,7 @@ import org.junit.BeforeClass;
 import br.com.caelum.vraptor.ioc.cdi.CDIBasedContainer;
 import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
 
-public class VRaptorIntegration {
+public  class VRaptorIntegration {
 
 	private static CdiContainer cdiContainer;
 	protected static CDIBasedContainer cdiBasedContainer;
@@ -30,5 +31,10 @@ public class VRaptorIntegration {
 		navigation.setContainer(cdiContainer);
 		return navigation.start();
 	}
-		
+	
+	@Produces
+	public JspResolver jspResolver() {
+		return new JspResolver("src/main/webapp/");
+	}
+
 }
