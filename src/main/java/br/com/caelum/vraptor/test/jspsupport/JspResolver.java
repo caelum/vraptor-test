@@ -24,6 +24,9 @@ public class JspResolver {
 	
 	private String webContentPath;
 
+	@Deprecated
+	public JspResolver() {}
+	
 	public JspResolver(String webContentPath) {
 		this.webContentPath = webContentPath;
 	}

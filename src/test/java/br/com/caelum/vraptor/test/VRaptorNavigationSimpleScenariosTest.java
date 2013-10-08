@@ -2,8 +2,11 @@ package br.com.caelum.vraptor.test;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.annotation.Priority;
+import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Specializes;
+import javax.interceptor.Interceptor;
 
 import org.junit.Test;
 
@@ -62,13 +65,4 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		assertEquals("Hello world from a jsp", html);
 	}
 	
-
-	@Produces
-	public JspResolver jspResolver() {
-		return new JspResolver(webContent());
-	}
-
-	protected String webContent() {
-		return "src/test/resources/WebContent/";
-	}
 }

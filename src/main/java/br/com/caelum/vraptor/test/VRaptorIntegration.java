@@ -33,11 +33,6 @@ public  class VRaptorIntegration {
 		VRaptorNavigation navigation = cdiBasedContainer.instanceFor(VRaptorNavigation.class);
 		navigation.setContainer(cdiContainer);
 		return navigation.start();
-	}
-	
-	@Produces
-	public JspResolver jspResolver() {
-		return new JspResolver("src/main/webapp/");
-	}
+	}	
 
 }
