@@ -2,9 +2,7 @@ package br.com.caelum.vraptor.test;
 
 import javax.enterprise.inject.spi.CDI;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 
 import br.com.caelum.vraptor.ioc.cdi.CDIBasedContainer;

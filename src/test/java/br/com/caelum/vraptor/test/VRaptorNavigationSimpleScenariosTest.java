@@ -1,5 +1,7 @@
 package br.com.caelum.vraptor.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -7,15 +9,10 @@ import java.net.URLClassLoader;
 
 import javax.naming.NamingException;
 import javax.servlet.jsp.JspFactory;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 
 import org.apache.jasper.JspC;
-import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.runtime.HttpJspBase;
 import org.apache.tomcat.InstanceManager;
-import org.jboss.weld.el.WeldExpressionFactory;
-import org.jboss.weld.environment.tomcat7.WeldInstanceManager;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -23,8 +20,6 @@ import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.test.models.Task;
-
-import static org.junit.Assert.assertEquals;
 
 public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 
@@ -95,6 +90,13 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 	public void shouldValidateObject(){
 		navigate().post("/test/test7", Parameters.initWith("task.description", "test").add("task.difficulty", 10))
 				.execute();	
+	}
+	
+	@Test
+	public void shouldCompileAndExecuteAJsp() {
+		VRaptorTestResult result = navigate().post("/test/test8").execute();	
+		String html = result.getResponseBody();
+		assertEquals("Hello world from a jsp", html);
 	}
 	
 	public static void main(String[] args) throws Exception {

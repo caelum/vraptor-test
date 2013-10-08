@@ -52,4 +52,9 @@ public class TestController {
 	public void test7(@Valid Task task){
 		
 	}	
+	
+	@Post
+	public void test8(){
+		
+	}	
 }

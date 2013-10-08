@@ -25,12 +25,15 @@ public class UserFlow {
 	protected CdiContainer cdiContainer;
 	private VRaptor filter;
 	private Instance<Result> result;
+	private JspResolver jsp;
 
-	public UserFlow(VRaptor filter, CdiContainer cdiContainer, MockServletContext context, Instance<Result> result) {
+	public UserFlow(VRaptor filter, CdiContainer cdiContainer, 
+			MockServletContext context, Instance<Result> result, JspResolver jsp) {
 		this.filter = filter;
 		this.cdiContainer = cdiContainer;
 		this.context = context;
 		this.result = result;
+		this.jsp = jsp;
 	}
 
 	public VRaptorTestResult execute() {
@@ -40,7 +43,7 @@ public class UserFlow {
 			VRaptorTestResult result = null;
 			for (UserRequest<VRaptorTestResult> req : flows) {
 				cdiContainer.startRequest();				
-				try{
+				try {
 					result = req.call(session);
 					session = result.getCurrentSession();
 				}
@@ -48,6 +51,7 @@ public class UserFlow {
 					cdiContainer.stopRequest();
 				}
 			}
+			jsp.resolve(result);
 			return result;
 		} catch (Exception e) {
 			throw new RuntimeException(e);

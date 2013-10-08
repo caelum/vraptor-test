@@ -1,5 +1,6 @@
 package br.com.caelum.vraptor.test;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
@@ -7,7 +8,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
 
 import br.com.caelum.vraptor.Result;
 
@@ -48,6 +48,22 @@ public class VRaptorTestResult {
 
 	public HttpSession getCurrentSession() {
 		return request.getSession();
+	}
+	
+	MockHttpServletRequest getRequest() {
+		return request;
+	}
+	
+	MockHttpServletResponse getResponse() {
+		return response;
+	}
+	
+	public String getResponseBody() {
+		try {
+			return response.getContentAsString();
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 

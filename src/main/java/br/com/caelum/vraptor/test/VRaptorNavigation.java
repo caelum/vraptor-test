@@ -34,7 +34,7 @@ public class VRaptorNavigation {
 		if(this.cdiContainer==null){
 			throw new IllegalStateException("Container must be set to enable scope control");
 		}
-		return new UserFlow(filter,cdiContainer,context,result);
+		return new UserFlow(filter,cdiContainer,context,result, new JspResolver("src/test/resources/WebContent"));
 	}
 	
 	public void setContainer(CdiContainer cdiContainer) {
