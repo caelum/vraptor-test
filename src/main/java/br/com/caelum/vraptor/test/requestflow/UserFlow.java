@@ -1,7 +1,10 @@
 package br.com.caelum.vraptor.test.requestflow;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.enterprise.inject.Instance;
 import javax.servlet.http.HttpSession;
@@ -29,6 +32,7 @@ public class UserFlow {
 	private VRaptor filter;
 	private Instance<Result> result;
 	private JspResolver jsp;
+	private boolean followRedirect;
 
 	public UserFlow(VRaptor filter, CdiContainer cdiContainer, 
 			MockServletContext context, Instance<Result> result, JspResolver jsp) {
@@ -40,37 +44,56 @@ public class UserFlow {
 	}
 
 	public VRaptorTestResult execute() {
-		try {
-			cdiContainer.startSession();
-			HttpSession session = null;
-			VRaptorTestResult result = null;
-			for (UserRequest<VRaptorTestResult> req : flows) {
-				cdiContainer.startRequest();				
-				try {
-					result = req.call(session);
-					session = result.getCurrentSession();
-				}
-				finally{
-					cdiContainer.stopRequest();
-				}
-			}
+		cdiContainer.startSession();
+		try{
+			VRaptorTestResult result = execute(new LinkedList<UserRequest<VRaptorTestResult>>(flows), null,null);
 			jsp.resolve(result);
 			return result;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
 		}
-		finally {
+		finally{
 			cdiContainer.stopSession();
 		}
 	}
 
+	private VRaptorTestResult execute(LinkedList<UserRequest<VRaptorTestResult>> flows, VRaptorTestResult result,HttpSession session) {
+		if (flows.isEmpty()) {
+			return result;
+		}
+		UserRequest<VRaptorTestResult> req = flows.removeFirst();
+		cdiContainer.startRequest();				
+		try {
+			result = req.call(session);					
+			session = result.getCurrentSession();
+			if (followRedirect && isAnyKindOfRedirect(result)) {
+				flows.addFirst(buildRequest(result.getLastPath(), HttpMethod.GET, new Parameters()));
+			}
+		}
+		finally {
+			cdiContainer.stopRequest();
+		}
+		return execute(flows, result,session);
+		
+	}
+
+	private boolean isAnyKindOfRedirect(VRaptorTestResult result) {
+		int status = result.getResponse().getStatus();
+		return status == 302 || status == 301;
+	}
+
 	public UserFlow to(final String url,final HttpMethod httpMethod,final Parameters parameters) {
-		flows.add(new UserRequest<VRaptorTestResult>() {
+		flows.add(buildRequest(url, httpMethod, parameters));
+		return this;
+
+	}
+
+	private UserRequest<VRaptorTestResult> buildRequest(final String url, final HttpMethod httpMethod,
+			final Parameters parameters) {
+		return new UserRequest<VRaptorTestResult>() {
 			@Override
 			public VRaptorTestResult call(HttpSession session) {				
 				MockHttpServletRequest request = new MockHttpServletRequest(context,httpMethod.toString(),url);
 				parameters.fill(request);
-				if(session!=null){
+				if (session!=null){
 					request.setSession(session);
 				}
 				MockHttpServletResponse response = new MockHttpServletResponse();
@@ -83,9 +106,7 @@ public class UserFlow {
 					throw new RuntimeException(e);
 				}
 			}
-		});
-		return this;
-
+		};
 	}
 	
 	public UserFlow get(String url){
@@ -102,6 +123,11 @@ public class UserFlow {
 
 	public UserFlow post(String url, Parameters parameters) {
 		return to(url,HttpMethod.POST,parameters);
+	}
+
+	public UserFlow followRedirect() {
+		this.followRedirect = true;
+		return this;
 	}
 	
 	
