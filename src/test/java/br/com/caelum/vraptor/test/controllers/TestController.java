@@ -50,11 +50,14 @@ public class TestController {
 	
 	@Post
 	public void test7(@Valid Task task){
-		
 	}	
 	
 	@Post
 	public void test8(){
-		
+	}	
+	
+	@Post
+	public void buggedMethod() {
+		throw new RuntimeException();
 	}	
 }

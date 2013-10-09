@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.enterprise.inject.Vetoed;
 import javax.servlet.http.HttpSession;
 
+import junit.framework.Assert;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -18,6 +20,7 @@ public class VRaptorTestResult {
 	private Map<String, Object> values;
 	private MockHttpServletResponse response;
 	private MockHttpServletRequest request;
+	private Throwable applicationError;
 
 	public VRaptorTestResult(Result result, MockHttpServletResponse response, MockHttpServletRequest request) {
 		super();
@@ -66,5 +69,16 @@ public class VRaptorTestResult {
 		}
 	}
 	
+	public VRaptorTestResult wasStatusOk() {
+		int status = response.getStatus();
+		if (status != 200) {
+			Assert.fail("Response status was " + status + " and not 200");
+		}
+		return this;
+	}
 
+	public void setApplicationError(Throwable applicationError) {
+		this.applicationError = applicationError;
+	}
+	
 }

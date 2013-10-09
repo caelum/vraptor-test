@@ -1,10 +1,12 @@
 package br.com.caelum.vraptor.test.requestflow;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.enterprise.inject.Instance;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
@@ -45,18 +47,19 @@ public class UserFlow {
 	public VRaptorTestResult execute() {
 		cdiContainer.startSession();
 		try {
-			VRaptorTestResult result = execute(new LinkedList<UserRequest<VRaptorTestResult>>(flows), null,null);
+			VRaptorTestResult result = executeFlow(new LinkedList<UserRequest<VRaptorTestResult>>(flows), null,null);
 			if (executeJsp) {
 				jsp.resolve(result);
 			}
 			return result;
 		}
-		finally{
+		finally {
 			cdiContainer.stopSession();
 		}
 	}
 
-	private VRaptorTestResult execute(LinkedList<UserRequest<VRaptorTestResult>> flows, VRaptorTestResult result,HttpSession session) {
+	private VRaptorTestResult executeFlow(LinkedList<UserRequest<VRaptorTestResult>> flows, 
+			VRaptorTestResult result,HttpSession session) {
 		if (flows.isEmpty()) {
 			return result;
 		}
@@ -72,7 +75,7 @@ public class UserFlow {
 		finally {
 			cdiContainer.stopRequest();
 		}
-		return execute(flows, result,session);
+		return executeFlow(flows, result,session);
 		
 	}
 
@@ -99,13 +102,20 @@ public class UserFlow {
 				}
 				MockHttpServletResponse response = new MockHttpServletResponse();
 				MockFilterChain chain = new MockFilterChain();
+				VRaptorTestResult vRaptorTestResult = null;
+				Throwable applicationError = null;
 				try {	
-					filter.doFilter(request,response,chain);			
-					Result vraptorResult = (Result) ((TargetInstanceProxy)result.get()).getTargetInstance();
-					return new VRaptorTestResult(vraptorResult,response,request);
-				} catch (Exception e) {
-					throw new RuntimeException(e);
+					filter.doFilter(request, response, chain);
+				} catch (ServletException e) {
+					applicationError = e.getCause();
+					response.setStatus(500);
+				} catch (IOException e) {
+					throw new RuntimeException("unknown io error", e);
 				}
+				Result vraptorResult = (Result) ((TargetInstanceProxy)result.get()).getTargetInstance();
+				vRaptorTestResult = new VRaptorTestResult(vraptorResult,response,request);
+				vRaptorTestResult.setApplicationError(applicationError);
+				return vRaptorTestResult;
 			}
 		};
 	}

@@ -2,6 +2,8 @@ package br.com.caelum.vraptor.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import junit.framework.AssertionFailedError;
 
 import org.junit.Test;
 
@@ -63,6 +65,18 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		VRaptorTestResult result = navigate().post("/test/test8").withoutJsp().execute();	
 		String html = result.getResponseBody();
 		assertTrue(html.isEmpty());
+	}
+	
+	@Test
+	public void shouldFailForStatusCodeDifferentThan200() {
+		try {
+			navigate()
+				.post("/test/buggedMethod")
+				.withoutJsp().execute().wasStatusOk();
+			fail("it should not get here");
+		} catch (AssertionFailedError error) {
+			//it worked
+		}
 	}
 	
 }
