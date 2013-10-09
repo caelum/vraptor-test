@@ -1,11 +1,12 @@
 package br.com.caelum.vraptor.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import br.com.caelum.vraptor.test.http.Parameters;
 import br.com.caelum.vraptor.test.models.Task;
-
-import static org.junit.Assert.assertEquals;
 
 public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 
@@ -55,6 +56,13 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		VRaptorTestResult result = navigate().post("/test/test8").execute();	
 		String html = result.getResponseBody();
 		assertEquals("Hello world from a jsp", html);
+	}
+	
+	@Test
+	public void shouldNotExecuteJsp() {
+		VRaptorTestResult result = navigate().post("/test/test8").withoutJsp().execute();	
+		String html = result.getResponseBody();
+		assertTrue(html.isEmpty());
 	}
 	
 }

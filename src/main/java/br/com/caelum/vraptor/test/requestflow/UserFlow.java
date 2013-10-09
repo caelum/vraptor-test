@@ -3,8 +3,6 @@ package br.com.caelum.vraptor.test.requestflow;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.enterprise.inject.Instance;
 import javax.servlet.http.HttpSession;
@@ -33,6 +31,7 @@ public class UserFlow {
 	private Instance<Result> result;
 	private JspResolver jsp;
 	private boolean followRedirect;
+	private boolean executeJsp = true;
 
 	public UserFlow(VRaptor filter, CdiContainer cdiContainer, 
 			MockServletContext context, Instance<Result> result, JspResolver jsp) {
@@ -45,9 +44,11 @@ public class UserFlow {
 
 	public VRaptorTestResult execute() {
 		cdiContainer.startSession();
-		try{
+		try {
 			VRaptorTestResult result = execute(new LinkedList<UserRequest<VRaptorTestResult>>(flows), null,null);
-			jsp.resolve(result);
+			if (executeJsp) {
+				jsp.resolve(result);
+			}
 			return result;
 		}
 		finally{
@@ -127,6 +128,11 @@ public class UserFlow {
 
 	public UserFlow followRedirect() {
 		this.followRedirect = true;
+		return this;
+	}
+
+	public UserFlow withoutJsp() {
+		this.executeJsp = false;
 		return this;
 	}
 	
