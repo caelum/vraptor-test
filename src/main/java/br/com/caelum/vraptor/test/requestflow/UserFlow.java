@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.controller.HttpMethod;
 import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
 import br.com.caelum.vraptor.test.VRaptorTestResult;
@@ -34,13 +35,16 @@ public class UserFlow {
 	private JspResolver jsp;
 	private boolean followRedirect;
 	private boolean executeJsp = true;
+	private Instance<Validator> validator;
 
 	public UserFlow(VRaptor filter, CdiContainer cdiContainer, 
-			MockServletContext context, Instance<Result> result, JspResolver jsp) {
+			MockServletContext context, Instance<Result> result, 
+			Instance<Validator> validator, JspResolver jsp) {
 		this.filter = filter;
 		this.cdiContainer = cdiContainer;
 		this.context = context;
 		this.result = result;
+		this.validator = validator;
 		this.jsp = jsp;
 	}
 
@@ -113,7 +117,8 @@ public class UserFlow {
 					throw new RuntimeException("unknown io error", e);
 				}
 				Result vraptorResult = (Result) ((TargetInstanceProxy)result.get()).getTargetInstance();
-				vRaptorTestResult = new VRaptorTestResult(vraptorResult,response,request);
+				Validator vraptorValidator = (Validator) ((TargetInstanceProxy)validator.get()).getTargetInstance();
+				vRaptorTestResult = new VRaptorTestResult(vraptorResult, response, request, vraptorValidator);
 				vRaptorTestResult.setApplicationError(applicationError);
 				return vRaptorTestResult;
 			}

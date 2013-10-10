@@ -8,7 +8,9 @@ import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.test.models.Task;
+import br.com.caelum.vraptor.validator.ValidationMessage;
 
 @Controller
 public class TestController {
@@ -17,6 +19,8 @@ public class TestController {
 	private Result result;
 	@Inject
 	private HttpSession session;
+	@Inject
+	private Validator validator;
 
 	public void test(){
 		result.include("name","vraptor");
@@ -44,7 +48,7 @@ public class TestController {
 	}	
 	
 	@Get
-	public void test6(){
+	public void test6() {
 		result.include("taskInSession",session.getAttribute("task"));
 	}
 	
@@ -54,7 +58,13 @@ public class TestController {
 	
 	@Post
 	public void test8(){
-	}	
+	}
+	
+	@Post
+	public void withValidatorError() {
+		validator.add(new ValidationMessage("error", "error"));
+		validator.onErrorRedirectTo(this).test();
+	}
 	
 	@Post
 	public void buggedMethod() {

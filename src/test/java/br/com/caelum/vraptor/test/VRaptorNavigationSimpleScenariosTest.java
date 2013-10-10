@@ -79,4 +79,14 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		}
 	}
 	
+	@Test
+	public void shouldCauseValidationErrors() {
+		try {
+			navigate().post("/test/withValidatorError").execute().isValid();	
+			fail("it should not get here");
+		} catch (AssertionFailedError error) {
+			//it worked
+		}
+	}
+	
 }

@@ -1,17 +1,18 @@
 package br.com.caelum.vraptor.test;
 
+import static junit.framework.Assert.fail;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
 import javax.servlet.http.HttpSession;
 
-import junit.framework.Assert;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 
 @Vetoed
 public class VRaptorTestResult {
@@ -21,12 +22,15 @@ public class VRaptorTestResult {
 	private MockHttpServletResponse response;
 	private MockHttpServletRequest request;
 	private Throwable applicationError;
+	private Validator validator;
 
-	public VRaptorTestResult(Result result, MockHttpServletResponse response, MockHttpServletRequest request) {
+	public VRaptorTestResult(Result result, MockHttpServletResponse response, 
+			MockHttpServletRequest request, Validator validator) {
 		super();
 		this.result = result;
 		this.response = response;
 		this.request = request;
+		this.validator = validator;
 		this.values = result.included();
 	}
 	
@@ -72,13 +76,20 @@ public class VRaptorTestResult {
 	public VRaptorTestResult wasStatusOk() {
 		int status = response.getStatus();
 		if (status != 200) {
-			Assert.fail("Response status was " + status + " and not 200");
+			fail("Response status was " + status + " and not 200");
 		}
 		return this;
 	}
 
 	public void setApplicationError(Throwable applicationError) {
 		this.applicationError = applicationError;
+	}
+
+	public VRaptorTestResult isValid() {
+		if (validator.hasErrors()) {
+			fail("Found validation errors");
+		}
+		return this;
 	}
 	
 }

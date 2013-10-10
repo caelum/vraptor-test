@@ -12,6 +12,7 @@ import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
 import br.com.caelum.vraptor.test.jspsupport.JspResolver;
 
@@ -23,6 +24,9 @@ public class VRaptorNavigation {
 	@Inject	
 	@RequestScoped
 	private Instance<Result> result;
+	@Inject	
+	@RequestScoped
+	private Instance<Validator> validator;
 	private MockServletContext context = new MockServletContext();
 	private CdiContainer cdiContainer;
 	@Inject	
@@ -37,7 +41,7 @@ public class VRaptorNavigation {
 		if(this.cdiContainer==null){
 			throw new IllegalStateException("Container must be set to enable scope control");
 		}
-		return new UserFlow(filter,cdiContainer,context,result, jspResolver);
+		return new UserFlow(filter, cdiContainer, context, result, validator, jspResolver);
 	}
 	
 	public void setContainer(CdiContainer cdiContainer) {
