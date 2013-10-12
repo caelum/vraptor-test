@@ -1,11 +1,15 @@
 package br.com.caelum.vraptor.test.requestflow;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
@@ -15,15 +19,22 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 
+import sun.java2d.cmm.ProfileActivator;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.controller.HttpMethod;
 import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
+import br.com.caelum.vraptor.proxy.MethodInvocation;
+import br.com.caelum.vraptor.proxy.Proxifier;
+import br.com.caelum.vraptor.proxy.SuperMethod;
 import br.com.caelum.vraptor.test.VRaptorTestResult;
+import br.com.caelum.vraptor.test.http.JspFakeParser;
+import br.com.caelum.vraptor.test.http.JspParser;
+import br.com.caelum.vraptor.test.http.JspRealParser;
 import br.com.caelum.vraptor.test.http.Parameters;
+import br.com.caelum.vraptor.test.http.VRaptorTestMockRequestDispatcher;
 import br.com.caelum.vraptor.test.jspsupport.JspResolver;
-
 
 public class UserFlow {
 
@@ -36,9 +47,9 @@ public class UserFlow {
 	private boolean followRedirect;
 	private boolean executeJsp = true;
 	private Instance<Validator> validator;
+	private JspParser jspParser;
 
-	public UserFlow(VRaptor filter, CdiContainer cdiContainer, 
-			MockServletContext context, Instance<Result> result, 
+	public UserFlow(VRaptor filter, CdiContainer cdiContainer, MockServletContext context, Instance<Result> result,
 			Instance<Validator> validator, JspResolver jsp) {
 		this.filter = filter;
 		this.cdiContainer = cdiContainer;
@@ -46,41 +57,40 @@ public class UserFlow {
 		this.result = result;
 		this.validator = validator;
 		this.jsp = jsp;
+		this.jspParser = new JspFakeParser();
 	}
 
 	public VRaptorTestResult execute() {
+		if (executeJsp) {
+			this.jspParser = new JspRealParser(jsp);
+		}
 		cdiContainer.startSession();
 		try {
-			VRaptorTestResult result = executeFlow(new LinkedList<UserRequest<VRaptorTestResult>>(flows), null,null);
-			if (executeJsp) {
-				jsp.resolve(result);
-			}
+			VRaptorTestResult result = executeFlow(new LinkedList<UserRequest<VRaptorTestResult>>(flows), null, null);
 			return result;
-		}
-		finally {
+		} finally {
 			cdiContainer.stopSession();
 		}
 	}
 
-	private VRaptorTestResult executeFlow(LinkedList<UserRequest<VRaptorTestResult>> flows, 
-			VRaptorTestResult result,HttpSession session) {
+	private VRaptorTestResult executeFlow(LinkedList<UserRequest<VRaptorTestResult>> flows, VRaptorTestResult result,
+			HttpSession session) {
 		if (flows.isEmpty()) {
 			return result;
 		}
 		UserRequest<VRaptorTestResult> req = flows.removeFirst();
-		cdiContainer.startRequest();				
+		cdiContainer.startRequest();
 		try {
-			result = req.call(session);					
+			result = req.call(session);
 			session = result.getCurrentSession();
 			if (followRedirect && isAnyKindOfRedirect(result)) {
 				flows.addFirst(buildRequest(result.getLastPath(), HttpMethod.GET, new Parameters()));
 			}
-		}
-		finally {
+		} finally {
 			cdiContainer.stopRequest();
 		}
-		return executeFlow(flows, result,session);
-		
+		return executeFlow(flows, result, session);
+
 	}
 
 	private boolean isAnyKindOfRedirect(VRaptorTestResult result) {
@@ -88,7 +98,7 @@ public class UserFlow {
 		return status == 302 || status == 301;
 	}
 
-	public UserFlow to(final String url,final HttpMethod httpMethod,final Parameters parameters) {
+	public UserFlow to(final String url, final HttpMethod httpMethod, final Parameters parameters) {
 		flows.add(buildRequest(url, httpMethod, parameters));
 		return this;
 
@@ -98,17 +108,22 @@ public class UserFlow {
 			final Parameters parameters) {
 		return new UserRequest<VRaptorTestResult>() {
 			@Override
-			public VRaptorTestResult call(HttpSession session) {				
-				MockHttpServletRequest request = new MockHttpServletRequest(context,httpMethod.toString(),url);
+			public VRaptorTestResult call(HttpSession session) {
+				MockHttpServletRequest request = new MockHttpServletRequest(context, httpMethod.toString(), url){
+					@Override
+					public RequestDispatcher getRequestDispatcher(String path) {
+						return new VRaptorTestMockRequestDispatcher(path, jspParser);
+					}
+				};
 				parameters.fill(request);
-				if (session!=null){
+				if (session != null) {
 					request.setSession(session);
 				}
 				MockHttpServletResponse response = new MockHttpServletResponse();
 				MockFilterChain chain = new MockFilterChain();
 				VRaptorTestResult vRaptorTestResult = null;
 				Throwable applicationError = null;
-				try {	
+				try {
 					filter.doFilter(request, response, chain);
 				} catch (ServletException e) {
 					applicationError = e.getCause();
@@ -116,29 +131,29 @@ public class UserFlow {
 				} catch (IOException e) {
 					throw new RuntimeException("unknown io error", e);
 				}
-				Result vraptorResult = (Result) ((TargetInstanceProxy)result.get()).getTargetInstance();
-				Validator vraptorValidator = (Validator) ((TargetInstanceProxy)validator.get()).getTargetInstance();
+				Result vraptorResult = (Result) ((TargetInstanceProxy) result.get()).getTargetInstance();
+				Validator vraptorValidator = (Validator) ((TargetInstanceProxy) validator.get()).getTargetInstance();
 				vRaptorTestResult = new VRaptorTestResult(vraptorResult, response, request, vraptorValidator);
 				vRaptorTestResult.setApplicationError(applicationError);
 				return vRaptorTestResult;
 			}
 		};
 	}
-	
-	public UserFlow get(String url){
-		return get(url,new Parameters());
-	}
-	
-	public UserFlow get(String url, Parameters parameters) {
-		return to(url,HttpMethod.GET,parameters);
+
+	public UserFlow get(String url) {
+		return get(url, new Parameters());
 	}
 
-	public UserFlow post(String url){
-		return post(url,new Parameters());
+	public UserFlow get(String url, Parameters parameters) {
+		return to(url, HttpMethod.GET, parameters);
+	}
+
+	public UserFlow post(String url) {
+		return post(url, new Parameters());
 	}
 
 	public UserFlow post(String url, Parameters parameters) {
-		return to(url,HttpMethod.POST,parameters);
+		return to(url, HttpMethod.POST, parameters);
 	}
 
 	public UserFlow followRedirect() {
@@ -150,7 +165,5 @@ public class UserFlow {
 		this.executeJsp = false;
 		return this;
 	}
-	
-	
 
 }

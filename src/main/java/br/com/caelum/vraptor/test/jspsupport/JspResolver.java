@@ -10,6 +10,8 @@ import java.net.URLClassLoader;
 import javax.el.ELContextListener;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
 
@@ -22,13 +24,10 @@ import org.jboss.weld.manager.BeanManagerImpl;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
-import br.com.caelum.vraptor.test.VRaptorTestResult;
-
 public class JspResolver {
 	
 	private String webContentPath;
 	private BeanManagerImpl manager;
-    private static final String WELD_LISTENER_CLASS_NAME = "org.jboss.weld.servlet.WeldListener";
     private static final String EXPRESSION_FACTORY_NAME = "org.jboss.weld.el.ExpressionFactory";
 
 	@Deprecated
@@ -39,29 +38,29 @@ public class JspResolver {
 		this.manager = manager;
 	}
 	
-	public void resolve(VRaptorTestResult result) {
-		File jspFile = new File(webContentPath, "." + result.getLastPath());
+	public void resolve(String forwardedUrl, HttpServletRequest request, HttpServletResponse response) {
+		File jspFile = new File(webContentPath, "." + forwardedUrl);
 		if (!jspFile.exists()) {
 			return;
 		}
-		compileAndExecuteJsp(result);
+		compileAndExecuteJsp(forwardedUrl,request,response);
 	}
 
-	private void compileAndExecuteJsp(VRaptorTestResult result) {
+	private void compileAndExecuteJsp(String forwardedUrl, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			File compilationDir = compileJsp(result);
+			File compilationDir = compileJsp(forwardedUrl);
 			
-			HttpJspBase instance = loadJsp(result, compilationDir);
-			instance._jspService(result.getRequest(), result.getResponse());
+			HttpJspBase instance = loadJsp(forwardedUrl, compilationDir);
+			instance._jspService(request, response);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | ServletException | IOException e) {
 			throw new RuntimeException("could not compile jsp", e);
 		}
 	}
 
-	private HttpJspBase loadJsp(VRaptorTestResult result, File compilationDir)
+	private HttpJspBase loadJsp(String forwardedUrl, File compilationDir)
 			throws MalformedURLException, ClassNotFoundException,
 			InstantiationException, IllegalAccessException, ServletException {
-		String jspClassName = toJspClassName(result);
+		String jspClassName = toJspClassName(forwardedUrl);
 		URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {compilationDir.toURI().toURL()});
 		Class<?> cls = Class.forName(jspClassName, true, classLoader);
 		HttpJspBase instance = (HttpJspBase) cls.newInstance();
@@ -83,10 +82,10 @@ public class JspResolver {
 		return instance;
 	}
 
-	private File compileJsp(VRaptorTestResult result) throws JasperException {
+	private File compileJsp(String forwardedUrl) throws JasperException {
 		JspC jspC = new JspC();
 		jspC.setUriroot(webContentPath);
-		jspC.setJspFiles("." + result.getLastPath());
+		jspC.setJspFiles("." + forwardedUrl);
 		jspC.setOutputDir("jsp-compilation");
 		jspC.setCompile(true);
 		jspC.execute();
@@ -95,8 +94,8 @@ public class JspResolver {
 	}
 	
 	
-	private String toJspClassName(VRaptorTestResult result) {
-		String path = result.getLastPath();
+	private String toJspClassName(String forwardedUrl) {
+		String path = forwardedUrl;
 		String[] split = path.split("/");
 		String method = split[split.length - 1];
 		method = method.substring(0, method.length() - 4);
