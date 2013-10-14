@@ -1,14 +1,11 @@
 package br.com.caelum.vraptor.test.requestflow;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
@@ -19,15 +16,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 
-import sun.java2d.cmm.ProfileActivator;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.controller.HttpMethod;
 import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
-import br.com.caelum.vraptor.proxy.MethodInvocation;
-import br.com.caelum.vraptor.proxy.Proxifier;
-import br.com.caelum.vraptor.proxy.SuperMethod;
 import br.com.caelum.vraptor.test.VRaptorTestResult;
 import br.com.caelum.vraptor.test.http.JspFakeParser;
 import br.com.caelum.vraptor.test.http.JspParser;
@@ -43,9 +36,7 @@ public class UserFlow {
 	protected CdiContainer cdiContainer;
 	private VRaptor filter;
 	private Instance<Result> result;
-	private JspResolver jsp;
 	private boolean followRedirect;
-	private boolean executeJsp = true;
 	private Instance<Validator> validator;
 	private JspParser jspParser;
 
@@ -56,14 +47,10 @@ public class UserFlow {
 		this.context = context;
 		this.result = result;
 		this.validator = validator;
-		this.jsp = jsp;
-		this.jspParser = new JspFakeParser();
+		this.jspParser = new JspRealParser(jsp);
 	}
 
 	public VRaptorTestResult execute() {
-		if (executeJsp) {
-			this.jspParser = new JspRealParser(jsp);
-		}
 		cdiContainer.startSession();
 		try {
 			VRaptorTestResult result = executeFlow(new LinkedList<UserRequest<VRaptorTestResult>>(flows), null, null);
@@ -162,7 +149,7 @@ public class UserFlow {
 	}
 
 	public UserFlow withoutJsp() {
-		this.executeJsp = false;
+		this.jspParser = new JspFakeParser();
 		return this;
 	}
 
