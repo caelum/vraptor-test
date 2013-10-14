@@ -41,6 +41,8 @@ public class JspResolver {
 	public void resolve(String forwardedUrl, HttpServletRequest request, HttpServletResponse response) {
 		File jspFile = new File(webContentPath, "." + forwardedUrl);
 		if (!jspFile.exists()) {
+			response.setStatus(404);
+			writeToResponse(forwardedUrl + " not found", response);
 			return;
 		}
 		compileAndExecuteJsp(forwardedUrl,request,response);
@@ -124,6 +126,15 @@ public class JspResolver {
 
 		@Override
 		public void destroyInstance(Object arg0) throws IllegalAccessException, InvocationTargetException {
+		}
+	}
+	
+	private void writeToResponse(String body,
+			HttpServletResponse response) {
+		try {
+			response.getWriter().println(body);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
