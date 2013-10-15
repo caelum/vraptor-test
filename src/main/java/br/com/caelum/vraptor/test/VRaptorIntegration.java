@@ -27,7 +27,7 @@ public  class VRaptorIntegration {
 		cdiContainer.shutdown();
 	}	
 	
-	protected UserFlow navigate(){
+	protected static UserFlow navigate(){
 		VRaptorNavigation navigation = cdiBasedContainer.instanceFor(VRaptorNavigation.class);
 		navigation.setContainer(cdiContainer);
 		return navigation.start();
