@@ -72,7 +72,7 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		try {
 			navigate()
 				.post("/test/buggedMethod")
-				.withoutJsp().execute().wasStatusOk();
+				.withoutJsp().execute().wasStatus(200);
 			fail("it should not get here");
 		} catch (AssertionFailedError error) {
 			//it worked

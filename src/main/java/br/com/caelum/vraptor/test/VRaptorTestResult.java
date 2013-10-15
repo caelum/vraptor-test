@@ -73,10 +73,10 @@ public class VRaptorTestResult {
 		}
 	}
 	
-	public VRaptorTestResult wasStatusOk() {
+	public VRaptorTestResult wasStatus(int expectedStatus) {
 		int status = response.getStatus();
-		if (status != 200) {
-			fail("Response status was " + status + " and not 200");
+		if (status != expectedStatus) {
+			fail("Response status was " + status + " and not " + expectedStatus);
 		}
 		return this;
 	}
@@ -88,6 +88,13 @@ public class VRaptorTestResult {
 	public VRaptorTestResult isValid() {
 		if (validator.hasErrors()) {
 			fail("Found validation errors");
+		}
+		return this;
+	}
+	
+	public VRaptorTestResult isInvalid() {
+		if (validator.hasErrors()) {
+			fail("Validation errors not found");
 		}
 		return this;
 	}
