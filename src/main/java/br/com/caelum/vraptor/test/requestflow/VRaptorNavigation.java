@@ -12,15 +12,14 @@ import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
-import br.com.caelum.vraptor.Validator;
-import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
-import br.com.caelum.vraptor.proxy.Proxifier;
+import br.com.caelum.vraptor.test.container.CdiContainer;
 import br.com.caelum.vraptor.test.jspsupport.JspResolver;
+import br.com.caelum.vraptor.validator.Validator;
 
 @ApplicationScoped
 public class VRaptorNavigation {
 	
-	@Inject	
+	@Inject
 	private VRaptor filter;
 	@Inject	
 	@RequestScoped

@@ -8,9 +8,9 @@ import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.test.models.Task;
-import br.com.caelum.vraptor.validator.ValidationMessage;
+import br.com.caelum.vraptor.validator.SimpleMessage;
+import br.com.caelum.vraptor.validator.Validator;
 
 @Controller
 public class TestController {
@@ -62,7 +62,7 @@ public class TestController {
 	
 	@Post
 	public void withValidatorError() {
-		validator.add(new ValidationMessage("error", "error"));
+		validator.add(new SimpleMessage("error", "error"));
 		validator.onErrorRedirectTo(this).test();
 	}
 	

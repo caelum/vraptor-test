@@ -6,7 +6,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import br.com.caelum.vraptor.ioc.cdi.CDIBasedContainer;
-import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
+import br.com.caelum.vraptor.test.container.CdiContainer;
 import br.com.caelum.vraptor.test.requestflow.UserFlow;
 import br.com.caelum.vraptor.test.requestflow.VRaptorNavigation;
 
@@ -17,7 +17,7 @@ public  class VRaptorIntegration {
 
 	@BeforeClass
 	public static void startCDIContainer(){
-		cdiContainer = new br.com.caelum.vraptor.ioc.cdi.CdiContainer();
+		cdiContainer = new CdiContainer();
 		cdiContainer.start();
 		cdiBasedContainer = CDI.current().select(CDIBasedContainer.class).get();
 	}

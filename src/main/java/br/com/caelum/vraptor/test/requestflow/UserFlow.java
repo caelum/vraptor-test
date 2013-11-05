@@ -18,16 +18,16 @@ import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
-import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.controller.HttpMethod;
-import br.com.caelum.vraptor.ioc.cdi.CdiContainer;
 import br.com.caelum.vraptor.test.VRaptorTestResult;
+import br.com.caelum.vraptor.test.container.CdiContainer;
 import br.com.caelum.vraptor.test.http.JspFakeParser;
 import br.com.caelum.vraptor.test.http.JspParser;
 import br.com.caelum.vraptor.test.http.JspRealParser;
 import br.com.caelum.vraptor.test.http.Parameters;
 import br.com.caelum.vraptor.test.http.VRaptorTestMockRequestDispatcher;
 import br.com.caelum.vraptor.test.jspsupport.JspResolver;
+import br.com.caelum.vraptor.validator.Validator;
 
 public class UserFlow {
 
