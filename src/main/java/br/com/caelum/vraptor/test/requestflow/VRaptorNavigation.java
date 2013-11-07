@@ -1,5 +1,6 @@
 package br.com.caelum.vraptor.test.requestflow;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.CreationalContext;
@@ -7,6 +8,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -36,7 +38,9 @@ public class VRaptorNavigation {
 	@Inject	
 	private JspResolver jspResolver;
 	
-	public void bind(@Observes ContainerInitialized event, BeanManager manager) throws ServletException {
+	@PostConstruct
+	public void init() throws ServletException {
+		BeanManager manager = CDI.current().getBeanManager();
 		AnnotatedType<VRaptor> type = manager.createAnnotatedType(VRaptor.class);
 		InjectionTarget<VRaptor> target = manager.createInjectionTarget(type);
 		CreationalContext<VRaptor> ctx = manager.createCreationalContext(null);
