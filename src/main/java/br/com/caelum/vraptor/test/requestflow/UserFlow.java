@@ -112,11 +112,10 @@ public class UserFlow {
 				Throwable applicationError = null;
 				try {
 					filter.doFilter(request, response, chain);
-				} catch (ServletException e) {
+				//TODO: find a better alternative
+				} catch (Exception e) {
 					applicationError = e.getCause();
 					response.setStatus(500);
-				} catch (IOException e) {
-					throw new RuntimeException("unknown io error", e);
 				}
 				Result vraptorResult = (Result) ((TargetInstanceProxy) result.get()).getTargetInstance();
 				Validator vraptorValidator = (Validator) ((TargetInstanceProxy) validator.get()).getTargetInstance();
