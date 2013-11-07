@@ -1,12 +1,17 @@
 package br.com.caelum.vraptor.test.requestflow;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockServletContext;
 
@@ -19,8 +24,7 @@ import br.com.caelum.vraptor.validator.Validator;
 @ApplicationScoped
 public class VRaptorNavigation {
 	
-	@Inject
-	private VRaptor filter;
+	private VRaptor filter = new VRaptor();
 	@Inject	
 	@RequestScoped
 	private Instance<Result> result;
@@ -32,8 +36,11 @@ public class VRaptorNavigation {
 	@Inject	
 	private JspResolver jspResolver;
 	
-	@PostConstruct
-	private void init() throws ServletException{
+	public void bind(@Observes ContainerInitialized event, BeanManager manager) throws ServletException {
+		AnnotatedType<VRaptor> type = manager.createAnnotatedType(VRaptor.class);
+		InjectionTarget<VRaptor> target = manager.createInjectionTarget(type);
+		CreationalContext<VRaptor> ctx = manager.createCreationalContext(null);
+		target.inject(filter, ctx);
 		filter.init(new MockFilterConfig(context));
 	}
 	
