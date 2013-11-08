@@ -32,7 +32,7 @@ that extends our base class, `VRaptorIntegration`:
 
 This test case will execute a request to `/test/test` url in your application
 and return a `VRaptorTestResult` object, this object allow you to verify things that
-happened after the request:
+happened during the request:
 
 
     @Test
@@ -43,13 +43,14 @@ happened after the request:
     }
 
 In the second line of the test, we verify that the http status code of the
-request was 200 and that there was no validation errors (from vraptor
+request was 200 and that there was no validation errors (included in vraptor's
 `Validator` class). If any of this two conditions had failed, the test would
 fail imediatly (you don't need to write any assert).
 
 In the third line, we verify if a attribute was included in the result (in a
-`result.include` all in the controller being tested, for example). The
-`result.getObject` method returns the object included or null if it was
+`result.include` in the controller being tested, for example). The
+`result.getObject` method returns the object included or null if it wasn't
+included.
 
 You can also add parameters to be sent in the request:
 
@@ -74,4 +75,5 @@ written to the response from the result object:
     }
 
 For other examples, check the vraptor-test tests :-) 
+
 https://github.com/caelum/vraptor-test/blob/master/src/test/java/br/com/caelum/vraptor/test/VRaptorNavigationSimpleScenariosTest.java
