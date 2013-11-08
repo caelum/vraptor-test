@@ -31,9 +31,11 @@ that extends our base class, `VRaptorIntegration`:
     }
 
 This test case will execute a request to `/test/test` url in your application
-and return a `VRaptorTestResult` object, this object allow you to verify things that
-happened during the request:
+and return a `VRaptorTestResult` object. Note that this test will really execute the code of your
+controller.
 
+The `VRaptorTestResult` object allow you to verify things that
+happened during the request:
 
     @Test
     public void shouldIncludeAtrributeInResult() throws Exception {
