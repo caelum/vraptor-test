@@ -1,14 +1,12 @@
 ## vraptor-test
 
-A VRaptor plugin that allows you to quickly create integration or system tests.
+A VRaptor plugin that allows you to quickly create integration or system tests. 
+
+This plugin only works with vraptor-4.* versions.
 
 # installing
 
-You can install it by doing:
-
-	vraptor plugin vraptor-test
-	
-Or add to your pom:
+Add to your pom:
 
 		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
@@ -19,26 +17,61 @@ Or add to your pom:
 		
 Or simply copy all jars to your classpath.
 		
-# Creating a system wide test
+# creating a system wide test
 
-Create a test case such as the following, that starts the server just once:
+To create a test with vraptor-test you only need to create a junit test class
+that extends our base class, `VRaptorIntegration`: 
 
-	public interface Server {
-		static final RealVRaptor VRAPTOR = new RealVRaptor(new File("src/main/webapp")); 
-	}
-	
-	public class IndexTest implements Server {
-	
-		@Test
-		public void shouldHaveTheProductsListAvailable() {
-			assertEquals(200, VRAPTOR.at("/products").get().getCode());
-		}
-	}
-	
-The VRAPTOR.at method returns a Restfulie client instance, so you can use it as a client
-HTTP api to access your vraptor instance. Note that system wide tests will render your view
-files and fully process the web.xml configuration.
+    public class IntegrationTest extends VRaptorIntegration {
 
-# Running the tests
-		
-To run your tests, use the build tool you have chosen with vraptor-scaffold or simply use JUnit in your IDE.
+        @Test
+        public void shouldIncludeAtrributeInResult() throws Exception {
+            VRaptorTestResult result = navigate().get("/test/test").execute();
+        }
+    }
+
+This test case will execute a request to `/test/test` url in your application
+and return a `VRaptorTestResult` object, this object allow you to verify things that
+happened after the request:
+
+
+    @Test
+    public void shouldIncludeAtrributeInResult() throws Exception {
+        VRaptorTestResult result = navigate().get("/test/test").execute();
+        result.wasStatus(200).isValid();
+        assertEquals("vraptor", result.getObject("name"));
+    }
+
+In the second line of the test, we verify that the http status code of the
+request was 200 and that there was no validation errors (from vraptor
+`Validator` class). If any of this two conditions had failed, the test would
+fail imediatly (you don't need to write any assert).
+
+In the third line, we verify if a attribute was included in the result (in a
+`result.include` all in the controller being tested, for example). The
+`result.getObject` method returns the object included or null if it was
+
+You can also add parameters to be sent in the request:
+
+    @Test
+    public void shouldIncludeAtrributeInResult() throws Exception {
+        VRaptorTestResult result = navigate().post("/tasks", 
+            Parameters.initWith("task.description", "Task description").add("task.name", "Task name")
+            .execute();
+        Task task = result.getObject("task"));
+        assertEquals("Task description", task.getDescription());
+        assertEquals("Task name", task.getName());
+    }
+
+vraptor-test also compile and execute jsp files. You can get the final output
+written to the response from the result object:
+
+    @Test
+    public void shouldCompileAndExecuteAJsp() {
+        VRaptorTestResult result = navigate().post("/task/1").execute();
+        String html = result.getResponseBody();
+        assertEquals("<h1>Task name</h1>", html);
+    }
+
+For other examples, check the vraptor-test tests :-) 
+https://github.com/caelum/vraptor-test/blob/master/src/test/java/br/com/caelum/vraptor/test/VRaptorNavigationSimpleScenariosTest.java
