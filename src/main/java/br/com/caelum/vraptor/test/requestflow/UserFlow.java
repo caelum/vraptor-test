@@ -68,6 +68,7 @@ public class UserFlow {
 		cdiContainer.startRequest();
 		try {
 			result = req.call(session);
+			session = result.getCurrentSession();
 			if (followRedirect && isAnyKindOfRedirect(result)) {
 				flows.addFirst(buildRequest(result.getLastPath(), HttpMethod.GET, new Parameters()));
 			}
