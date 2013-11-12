@@ -9,6 +9,7 @@ https://github.com/caelum/vraptor-test/tree/vraptor3).
 # installing
 
 Add to your pom:
+
 ```xml
 <dependency>
 	<groupId>br.com.caelum.vraptor</groupId>
