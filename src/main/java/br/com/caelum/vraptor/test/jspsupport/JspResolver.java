@@ -29,11 +29,13 @@ public class JspResolver {
 	private String webContentPath;
 	private BeanManagerImpl manager;
     private static final String EXPRESSION_FACTORY_NAME = "org.jboss.weld.el.ExpressionFactory";
+	private MockServletContext servletContext;
 
 	@Deprecated
 	public JspResolver() {}
 	
-	public JspResolver(String webContentPath,BeanManagerImpl manager) {
+	public JspResolver(String webContentPath, BeanManagerImpl manager) {
+		this.servletContext = new MockServletContext("file:"+new File(".").getAbsolutePath()+webContentPath);
 		this.webContentPath = webContentPath;
 		this.manager = manager;
 	}
@@ -66,7 +68,7 @@ public class JspResolver {
 		URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {compilationDir.toURI().toURL()});
 		Class<?> cls = Class.forName(jspClassName, true, classLoader);
 		HttpJspBase instance = (HttpJspBase) cls.newInstance();
-		MockServletConfig servletConfig = new MockServletConfig(new MockServletContext());
+		MockServletConfig servletConfig = new MockServletConfig(servletContext);
 		servletConfig.getServletContext().setAttribute(InstanceManager.class.getName(), new InstanceManagerImplementation());
         JspApplicationContext jspApplicationContext = JspFactory.getDefaultFactory().getJspApplicationContext(servletConfig.getServletContext());
 
@@ -136,6 +138,10 @@ public class JspResolver {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public MockServletContext getServletContext() {
+		return servletContext;
 	}
 
 }

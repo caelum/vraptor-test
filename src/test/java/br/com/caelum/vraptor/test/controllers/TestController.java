@@ -1,9 +1,9 @@
 package br.com.caelum.vraptor.test.controllers;
 
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +31,9 @@ public class TestController {
 	private HttpServletResponse response;
 	@Inject
 	private HttpServletRequest request;
+	@Inject
+	private ServletContext ctx;
+	
 	
 	public void test(){
 		result.include("name","vraptor");
@@ -100,6 +103,11 @@ public class TestController {
 			}
 		}
 		throw new NoSuchElementException("could not find cookie");
+	}
+	
+	@Get
+	public void servletContextTest() {
+		result.include("realPath", ctx.getRealPath("WEB-INF/jsp/test/test8.jsp"));
 	}
 	
 }

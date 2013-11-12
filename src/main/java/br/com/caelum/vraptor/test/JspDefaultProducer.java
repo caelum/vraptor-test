@@ -22,6 +22,6 @@ public class JspDefaultProducer {
 	@Produces
 	@ApplicationScoped
 	public JspResolver create(){
-		return new JspResolver("src/main/webapp/",beanManagerImpl);
+		return new JspResolver("src/main/webapp",beanManagerImpl);
 	}
 }

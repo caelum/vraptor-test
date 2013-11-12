@@ -1,10 +1,12 @@
 package br.com.caelum.vraptor.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import junit.framework.AssertionFailedError;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import br.com.caelum.vraptor.test.http.Parameters;
@@ -93,6 +95,12 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 	public void shouldSetAndSendCookies() {
 		VRaptorTestResult result = navigate().post("/test/setCookie").get("/test/getCookie").execute();	
 		assertEquals("cookieValue", result.getObject("cookieFromRequest"));
+	}
+	
+	@Test
+	public void shouldGetRealPathFromServletContext() {
+		VRaptorTestResult result = navigate().get("/test/servletContextTest").execute();	
+		assertNotNull(result.getObject("realPath"));
 	}
 	
 }
