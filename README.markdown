@@ -2,7 +2,9 @@
 
 A VRaptor plugin that allows you to quickly create integration or system tests. 
 
-This plugin only works with vraptor-4.* versions.
+This plugin currently works only with VRaptor 4.x versions. For support to
+VRaptor 3, check vraptor-test 1.x versions (being developed in vraptor3 branch:
+https://github.com/caelum/vraptor-test/tree/vraptor3).
 
 # installing
 
@@ -11,7 +13,7 @@ Add to your pom:
 <dependency>
 	<groupId>br.com.caelum.vraptor</groupId>
 	<artifactId>vraptor-test</artifactId>
-	<version>1.0.0</version>
+	<version>2.0.0</version>
 	<scope>test</scope>
 </dependency>
 ```
