@@ -1,13 +1,12 @@
 package br.com.caelum.vraptor.test.requestflow;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.enterprise.inject.Instance;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
@@ -69,9 +68,11 @@ public class UserFlow {
 		cdiContainer.startRequest();
 		try {
 			result = req.call(session);
-			session = result.getCurrentSession();
 			if (followRedirect && isAnyKindOfRedirect(result)) {
 				flows.addFirst(buildRequest(result.getLastPath(), HttpMethod.GET, new Parameters()));
+			}
+			if (!flows.isEmpty()) {
+				flows.getFirst().setCookies(result.getResponse().getCookies());
 			}
 		} finally {
 			cdiContainer.stopRequest();
@@ -94,14 +95,17 @@ public class UserFlow {
 	private UserRequest<VRaptorTestResult> buildRequest(final String url, final HttpMethod httpMethod,
 			final Parameters parameters) {
 		return new UserRequest<VRaptorTestResult>() {
+			private Cookie[] cookies;
+
 			@Override
 			public VRaptorTestResult call(HttpSession session) {
-				MockHttpServletRequest request = new MockHttpServletRequest(context, httpMethod.toString(), url){
+				MockHttpServletRequest request = new MockHttpServletRequest(context, httpMethod.toString(), url) {
 					@Override
 					public RequestDispatcher getRequestDispatcher(String path) {
 						return new VRaptorTestMockRequestDispatcher(path, jspParser);
 					}
 				};
+				request.setCookies(cookies);
 				parameters.fill(request);
 				if (session != null) {
 					request.setSession(session);
@@ -122,6 +126,11 @@ public class UserFlow {
 				vRaptorTestResult = new VRaptorTestResult(vraptorResult, response, request, vraptorValidator);
 				vRaptorTestResult.setApplicationError(applicationError);
 				return vRaptorTestResult;
+			}
+
+			@Override
+			public void setCookies(Cookie[] cookies) {
+				this.cookies = cookies;
 			}
 		};
 	}

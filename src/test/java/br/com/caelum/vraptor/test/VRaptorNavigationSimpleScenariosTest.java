@@ -89,4 +89,10 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		}
 	}
 	
+	@Test
+	public void shouldSetAndSendCookies() {
+		VRaptorTestResult result = navigate().post("/test/setCookie").get("/test/getCookie").execute();	
+		assertEquals("cookieValue", result.getObject("cookieFromRequest"));
+	}
+	
 }

@@ -1,6 +1,12 @@
 package br.com.caelum.vraptor.test.controllers;
 
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -21,7 +27,11 @@ public class TestController {
 	private HttpSession session;
 	@Inject
 	private Validator validator;
-
+	@Inject
+	private HttpServletResponse response;
+	@Inject
+	private HttpServletRequest request;
+	
 	public void test(){
 		result.include("name","vraptor");
 	}
@@ -70,4 +80,26 @@ public class TestController {
 	public void buggedMethod() {
 		throw new RuntimeException();
 	}	
+	
+	@Post
+	public void setCookie() {
+		response.addCookie(new Cookie("cookieName", "cookieValue"));
+	}
+	
+	@Get
+	public void getCookie() {
+		String value = findCookie();
+		result.include("cookieFromRequest", value);
+	}
+
+	private String findCookie() {
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("cookieName")) {
+				return cookie.getValue();
+			}
+		}
+		throw new NoSuchElementException("could not find cookie");
+	}
+	
 }
