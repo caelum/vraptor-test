@@ -1,5 +1,8 @@
 package br.com.caelum.vraptor.test.requestflow;
 
+import static com.google.common.base.Objects.firstNonNull;
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +76,9 @@ public class UserFlow {
 				flows.addFirst(buildRequest(result.getLastPath(), HttpMethod.GET, new Parameters()));
 			}
 			if (!flows.isEmpty()) {
-				flows.getFirst().setCookies(result.getResponse().getCookies());
+				List<Cookie> cookies = req.getCookies();
+				cookies.addAll(result.getCookies());
+				flows.getFirst().setCookies(cookies);
 			}
 		} finally {
 			cdiContainer.stopRequest();
@@ -97,10 +102,11 @@ public class UserFlow {
 			final Parameters parameters) {
 		return new UserRequest<VRaptorTestResult>() {
 			private Cookie[] cookies;
+			private MockHttpServletRequest request;
 
 			@Override
 			public VRaptorTestResult call(HttpSession session) {
-				MockHttpServletRequest request = new MockHttpServletRequest(context, httpMethod.toString(), url) {
+				request = new MockHttpServletRequest(context, httpMethod.toString(), url) {
 					@Override
 					public RequestDispatcher getRequestDispatcher(String path) {
 						return new VRaptorTestMockRequestDispatcher(path, jspParser);
@@ -130,9 +136,15 @@ public class UserFlow {
 			}
 
 			@Override
-			public void setCookies(Cookie[] cookies) {
-				this.cookies = cookies;
+			public void setCookies(List<Cookie> cookies) {
+				this.cookies = cookies.toArray(new Cookie[cookies.size()]);
 			}
+			
+			@Override
+			public List<Cookie> getCookies() {
+				return new ArrayList<>(asList(firstNonNull(request.getCookies(), new Cookie[0])));
+			}
+			
 		};
 	}
 

@@ -89,6 +89,12 @@ public class TestController {
 		response.addCookie(new Cookie("cookieName", "cookieValue"));
 	}
 	
+	@Post
+	public void setCookieAndRedirect() {
+		response.addCookie(new Cookie("cookieName", "cookieValue"));
+		result.redirectTo(this).getCookie();
+	}
+	
 	@Get
 	public void getCookie() {
 		String value = findCookie();

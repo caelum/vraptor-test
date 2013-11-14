@@ -1,11 +1,16 @@
 package br.com.caelum.vraptor.test;
 
+import static com.google.common.base.Objects.firstNonNull;
+import static java.util.Arrays.asList;
 import static junit.framework.Assert.fail;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -97,6 +102,10 @@ public class VRaptorTestResult {
 			fail("Validation errors not found");
 		}
 		return this;
+	}
+
+	public List<Cookie> getCookies() {
+		return new ArrayList<>(asList(firstNonNull(getResponse().getCookies(), new Cookie[0])));
 	}
 	
 }

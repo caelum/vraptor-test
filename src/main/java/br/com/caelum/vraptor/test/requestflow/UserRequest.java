@@ -1,6 +1,9 @@
 package br.com.caelum.vraptor.test.requestflow;
 
+import java.util.List;
+
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.mock.web.MockHttpSession;
@@ -22,5 +25,8 @@ public interface UserRequest<T> {
 	 */
 	public T call(HttpSession session);
 
-	public void setCookies(Cookie[] cookies);
+	public void setCookies(List<Cookie> cookies);
+	
+	public List<Cookie> getCookies();
+
 }
