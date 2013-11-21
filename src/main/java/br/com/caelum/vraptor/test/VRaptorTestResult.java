@@ -4,6 +4,9 @@ import static com.google.common.base.Objects.firstNonNull;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.fail;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.google.common.base.Throwables;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.validator.Validator;
@@ -81,7 +86,12 @@ public class VRaptorTestResult {
 	public VRaptorTestResult wasStatus(int expectedStatus) {
 		int status = response.getStatus();
 		if (status != expectedStatus) {
-			fail("Response status was " + status + " and not " + expectedStatus);
+			String message = "Response status was " + status + " and not " + expectedStatus;
+			if (applicationError != null) {
+				String stacktrace = Throwables.getStackTraceAsString(applicationError);
+				message = "Your application threw an exception: " + stacktrace;
+			}
+			fail(message);
 		}
 		return this;
 	}
