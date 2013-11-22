@@ -15,9 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspC;
 import org.apache.jasper.runtime.HttpJspBase;
+import org.apache.log4j.Logger;
 import org.apache.tomcat.InstanceManager;
 import org.jboss.weld.environment.servlet.util.Reflections;
 import org.jboss.weld.manager.BeanManagerImpl;
@@ -30,6 +32,11 @@ public class JspResolver {
 	private BeanManagerImpl manager;
     private static final String EXPRESSION_FACTORY_NAME = "org.jboss.weld.el.ExpressionFactory";
 	private MockServletContext servletContext;
+	private JspApplicationContext jspApplicationContext;
+	private MockServletConfig servletConfig;
+	private File compilationDir;
+	private URLClassLoader classLoader;
+	private static Logger LOG = Logger.getLogger(JspResolver.class); 
 
 	@Deprecated
 	public JspResolver() {}
@@ -38,8 +45,35 @@ public class JspResolver {
 		this.servletContext = new MockServletContext("file:"+new File(".").getAbsolutePath()+webContentPath);
 		this.webContentPath = webContentPath;
 		this.manager = manager;
+		this.compilationDir = new File("jsp-compilation");
+		this.classLoader = buildClassLoader();
+		init();
+	}
+
+	private URLClassLoader buildClassLoader() {
+		try {
+			return URLClassLoader.newInstance(new URL[] {compilationDir.toURI().toURL()});
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
+	private void init() {
+		servletConfig = new MockServletConfig(servletContext);
+		servletConfig.getServletContext().setAttribute(InstanceManager.class.getName(), new InstanceManagerImplementation());
+		
+		JspFactory.setDefaultFactory(new org.apache.jasper.runtime.JspFactoryImpl());
+        jspApplicationContext = JspFactory.getDefaultFactory().getJspApplicationContext(servletConfig.getServletContext());
+        // Register the ELResolver with JSP
+        jspApplicationContext.addELResolver(manager.getELResolver());
+
+        // Register ELContextListener with JSP
+        jspApplicationContext.addELContextListener(Reflections.<ELContextListener>newInstance("org.jboss.weld.el.WeldELContextListener"));
+
+        // Push the wrapped expression factory into the servlet context so that Tomcat or Jetty can hook it in using a container code
+        servletConfig.getServletContext().setAttribute(EXPRESSION_FACTORY_NAME, manager.wrapExpressionFactory(jspApplicationContext.getExpressionFactory()));
+	}
+
 	public void resolve(String forwardedUrl, HttpServletRequest request, HttpServletResponse response) {
 		File jspFile = new File(webContentPath, "." + forwardedUrl);
 		if (!jspFile.exists()) {
@@ -52,7 +86,7 @@ public class JspResolver {
 
 	private void compileAndExecuteJsp(String forwardedUrl, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			File compilationDir = compileJsp(forwardedUrl);
+			compileJsp(forwardedUrl);
 			
 			HttpJspBase instance = loadJsp(forwardedUrl, compilationDir);
 			instance._jspService(request, response);
@@ -65,36 +99,31 @@ public class JspResolver {
 			throws MalformedURLException, ClassNotFoundException,
 			InstantiationException, IllegalAccessException, ServletException {
 		String jspClassName = toJspClassName(forwardedUrl);
-		URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {compilationDir.toURI().toURL()});
 		Class<?> cls = Class.forName(jspClassName, true, classLoader);
 		HttpJspBase instance = (HttpJspBase) cls.newInstance();
-		MockServletConfig servletConfig = new MockServletConfig(servletContext);
-		servletConfig.getServletContext().setAttribute(InstanceManager.class.getName(), new InstanceManagerImplementation());
-        JspApplicationContext jspApplicationContext = JspFactory.getDefaultFactory().getJspApplicationContext(servletConfig.getServletContext());
-
-        // Register the ELResolver with JSP
-        jspApplicationContext.addELResolver(manager.getELResolver());
-
-        // Register ELContextListener with JSP
-        jspApplicationContext.addELContextListener(Reflections.<ELContextListener>newInstance("org.jboss.weld.el.WeldELContextListener"));
-
-        // Push the wrapped expression factory into the servlet context so that Tomcat or Jetty can hook it in using a container code
-        servletConfig.getServletContext().setAttribute(EXPRESSION_FACTORY_NAME, manager.wrapExpressionFactory(jspApplicationContext.getExpressionFactory()));		
 		instance.init(servletConfig);
-		JspFactory.setDefaultFactory(new org.apache.jasper.runtime.JspFactoryImpl());
 		instance._jspInit();
 		return instance;
 	}
 
-	private File compileJsp(String forwardedUrl) throws JasperException {
+	private void compileJsp(String forwardedUrl) throws JasperException {
+		cleanCompilationDir();
 		JspC jspC = new JspC();
 		jspC.setUriroot(webContentPath);
 		jspC.setJspFiles("." + forwardedUrl);
-		jspC.setOutputDir("jsp-compilation");
+		jspC.setOutputDir(compilationDir.getAbsolutePath());
+		jspC.setClassPath(compilationDir.getAbsolutePath());
 		jspC.setCompile(true);
+		LOG.debug("Compiling jsp " + forwardedUrl + " to: " + compilationDir.getAbsolutePath());
 		jspC.execute();
-		File compilationDir = new File("jsp-compilation");
-		return compilationDir;
+	}
+
+	private void cleanCompilationDir() {
+		try {
+			FileUtils.deleteDirectory(compilationDir);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	
@@ -143,5 +172,4 @@ public class JspResolver {
 	public MockServletContext getServletContext() {
 		return servletContext;
 	}
-
 }
