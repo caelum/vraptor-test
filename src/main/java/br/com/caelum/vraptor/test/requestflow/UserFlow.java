@@ -101,7 +101,7 @@ public class UserFlow {
 	private UserRequest<VRaptorTestResult> buildRequest(final String url, final HttpMethod httpMethod,
 			final Parameters parameters) {
 		return new UserRequest<VRaptorTestResult>() {
-			private Cookie[] cookies;
+			private Cookie[] cookies = new Cookie[0];
 			private MockHttpServletRequest request;
 
 			@Override

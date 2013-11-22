@@ -114,4 +114,11 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		assertNotNull(result.getObject("realPath"));
 	}
 	
+	@Test
+	public void shouldSendEmptyCookieArray() {
+		VRaptorTestResult result = navigate().get("/test/emptyCookies").execute();	
+		result.wasStatus(200);
+		assertEquals(true, result.getObject("isEmpty"));
+	}
+	
 }

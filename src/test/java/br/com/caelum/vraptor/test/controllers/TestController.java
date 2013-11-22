@@ -116,4 +116,11 @@ public class TestController {
 		result.include("realPath", ctx.getRealPath("WEB-INF/jsp/test/test8.jsp"));
 	}
 	
+	@Get
+	public void emptyCookies() {
+		Cookie[] cookies = request.getCookies();
+		result.include("isEmpty", cookies.length == 0);
+		result.nothing();
+	}
+	
 }
