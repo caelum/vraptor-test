@@ -12,6 +12,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -41,6 +42,7 @@ public class UserFlow {
 	private boolean followRedirect;
 	private Instance<Validator> validator;
 	private JspParser jspParser;
+	private static Logger LOG = Logger.getLogger(UserFlow.class);
 
 	public UserFlow(VRaptor filter, CdiContainer cdiContainer, MockServletContext context, Instance<Result> result,
 			Instance<Validator> validator, JspResolver jsp) {
@@ -106,6 +108,7 @@ public class UserFlow {
 
 			@Override
 			public VRaptorTestResult call(HttpSession session) {
+				LOG.debug("starting request to " + url);
 				request = new MockHttpServletRequest(context, httpMethod.toString(), url) {
 					@Override
 					public RequestDispatcher getRequestDispatcher(String path) {
