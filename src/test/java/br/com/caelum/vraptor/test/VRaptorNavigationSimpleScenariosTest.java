@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import junit.framework.AssertionFailedError;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import br.com.caelum.vraptor.test.http.Parameters;
@@ -58,7 +57,7 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 	@Test
 	public void shouldCompileAndExecuteAJsp() {
 		VRaptorTestResult result = navigate().post("/test/test8").execute();	
-		String html = result.getResponseBody();
+		String html = result.wasStatus(200).getResponseBody();
 		assertEquals("Hello world from a jsp", html);
 	}
 	
