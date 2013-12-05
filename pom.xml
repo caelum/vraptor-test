@@ -13,6 +13,12 @@
 		<developerConnection>scm:git:git@github.com:caelum/vraptor-test.git</developerConnection>
 	</scm>
 
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+	
 	<name>vraptor-test</name>
 	<url>http://maven.apache.org</url>
 
