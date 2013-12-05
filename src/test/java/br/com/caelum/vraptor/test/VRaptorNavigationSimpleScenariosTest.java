@@ -55,7 +55,6 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 				.execute();	
 	}
 	
-	@Ignore("ignoring this unstable test to perform a release")
 	@Test
 	public void shouldCompileAndExecuteAJsp() {
 		VRaptorTestResult result = navigate().post("/test/test8").execute();	
