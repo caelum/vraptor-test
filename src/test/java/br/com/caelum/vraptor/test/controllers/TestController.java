@@ -73,6 +73,14 @@ public class TestController {
 	public void test8(){
 	}
 	
+	@Get
+	public void test9(){
+	}
+	
+	@Get
+	public void test10(){
+	}	
+	
 	@Post
 	public void withValidatorError() {
 		validator.add(new SimpleMessage("error", "error"));
