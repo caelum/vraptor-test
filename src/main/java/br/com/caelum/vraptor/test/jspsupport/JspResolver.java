@@ -25,59 +25,72 @@ import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
 public class JspResolver {
-	
+
 	private String webContentPath;
 	private BeanManagerImpl manager;
-    private static final String EXPRESSION_FACTORY_NAME = "org.jboss.weld.el.ExpressionFactory";
+	private static final String EXPRESSION_FACTORY_NAME = "org.jboss.weld.el.ExpressionFactory";
 
 	@Deprecated
-	public JspResolver() {}
-	
-	public JspResolver(String webContentPath,BeanManagerImpl manager) {
+	public JspResolver() {
+	}
+
+	public JspResolver(String webContentPath, BeanManagerImpl manager) {
 		this.webContentPath = webContentPath;
 		this.manager = manager;
 	}
-	
+
 	public void resolve(String forwardedUrl, HttpServletRequest request, HttpServletResponse response) {
+		/*
+		 * VRaptor always sends a jsp file name. WebContainer does the job looking for
+		 * jsps and jspfs
+		 */
 		File jspFile = new File(webContentPath, "." + forwardedUrl);
-		if (!jspFile.exists()) {
+		File jspfFile = new File(webContentPath, "." + forwardedUrl + "f");
+		if (!jspFile.exists() && !jspfFile.exists()) {
 			response.setStatus(404);
 			writeToResponse(forwardedUrl + " not found", response);
 			return;
 		}
-		compileAndExecuteJsp(forwardedUrl,request,response);
+		if (jspfFile.exists()) {
+			forwardedUrl = forwardedUrl + "f";
+		}
+		compileAndExecuteJsp(forwardedUrl, request, response);
 	}
 
 	private void compileAndExecuteJsp(String forwardedUrl, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			File compilationDir = compileJsp(forwardedUrl);
-			
 			HttpJspBase instance = loadJsp(forwardedUrl, compilationDir);
 			instance._jspService(request, response);
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | ServletException | IOException e) {
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | ServletException
+				| IOException e) {
 			throw new RuntimeException("could not compile jsp", e);
 		}
 	}
 
-	private HttpJspBase loadJsp(String forwardedUrl, File compilationDir)
-			throws MalformedURLException, ClassNotFoundException,
-			InstantiationException, IllegalAccessException, ServletException {
+	private HttpJspBase loadJsp(String forwardedUrl, File compilationDir) throws MalformedURLException,
+			ClassNotFoundException, InstantiationException, IllegalAccessException, ServletException {
 		String jspClassName = toJspClassName(forwardedUrl);
-		URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] {compilationDir.toURI().toURL()});
+		URLClassLoader classLoader = URLClassLoader.newInstance(new URL[] { compilationDir.toURI().toURL() });
 		Class<?> cls = Class.forName(jspClassName, true, classLoader);
 		HttpJspBase instance = (HttpJspBase) cls.newInstance();
 		MockServletConfig servletConfig = new MockServletConfig(new MockServletContext());
-		servletConfig.getServletContext().setAttribute(InstanceManager.class.getName(), new InstanceManagerImplementation());
-        JspApplicationContext jspApplicationContext = JspFactory.getDefaultFactory().getJspApplicationContext(servletConfig.getServletContext());
+		servletConfig.getServletContext().setAttribute(InstanceManager.class.getName(),
+				new InstanceManagerImplementation());
+		JspApplicationContext jspApplicationContext = JspFactory.getDefaultFactory().getJspApplicationContext(
+				servletConfig.getServletContext());
 
-        // Register the ELResolver with JSP
-        jspApplicationContext.addELResolver(manager.getELResolver());
+		// Register the ELResolver with JSP
+		jspApplicationContext.addELResolver(manager.getELResolver());
 
-        // Register ELContextListener with JSP
-        jspApplicationContext.addELContextListener(Reflections.<ELContextListener>newInstance("org.jboss.weld.el.WeldELContextListener"));
+		// Register ELContextListener with JSP
+		jspApplicationContext.addELContextListener(Reflections
+				.<ELContextListener> newInstance("org.jboss.weld.el.WeldELContextListener"));
 
-        // Push the wrapped expression factory into the servlet context so that Tomcat or Jetty can hook it in using a container code
-        servletConfig.getServletContext().setAttribute(EXPRESSION_FACTORY_NAME, manager.wrapExpressionFactory(jspApplicationContext.getExpressionFactory()));		
+		// Push the wrapped expression factory into the servlet context so that
+		// Tomcat or Jetty can hook it in using a container code
+		servletConfig.getServletContext().setAttribute(EXPRESSION_FACTORY_NAME,
+				manager.wrapExpressionFactory(jspApplicationContext.getExpressionFactory()));
 		instance.init(servletConfig);
 		JspFactory.setDefaultFactory(new org.apache.jasper.runtime.JspFactoryImpl());
 		instance._jspInit();
@@ -94,23 +107,25 @@ public class JspResolver {
 		File compilationDir = new File("jsp-compilation");
 		return compilationDir;
 	}
-	
-	
+
 	private String toJspClassName(String forwardedUrl) {
 		String path = forwardedUrl;
 		String[] split = path.split("/");
 		String method = split[split.length - 1];
-		method = method.substring(0, method.length() - 4);
+		String className = null;
+		if (forwardedUrl.endsWith("jspf")) {
+			className = method.substring(0, method.length() - 5)+"_jspf";
+		} else {
+			className = method.substring(0, method.length() - 4)+"_jsp";
+		}
 		String controller = split[split.length - 2];
-		
-		return "org.apache.jsp.WEB_002dINF.jsp." + controller + "." + method + "_jsp";
+		return "org.apache.jsp.WEB_002dINF.jsp." + controller + "." + className;
 	}
-
 
 	private static final class InstanceManagerImplementation implements InstanceManager {
 		@Override
-		public Object newInstance(String arg0, ClassLoader arg1) throws IllegalAccessException, InvocationTargetException,
-				NamingException, InstantiationException, ClassNotFoundException {
+		public Object newInstance(String arg0, ClassLoader arg1) throws IllegalAccessException,
+				InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
 			return null;
 		}
 
@@ -119,8 +134,8 @@ public class JspResolver {
 		}
 
 		@Override
-		public Object newInstance(String arg0) throws IllegalAccessException, InvocationTargetException, NamingException,
-				InstantiationException, ClassNotFoundException {
+		public Object newInstance(String arg0) throws IllegalAccessException, InvocationTargetException,
+				NamingException, InstantiationException, ClassNotFoundException {
 			return null;
 		}
 
@@ -128,9 +143,8 @@ public class JspResolver {
 		public void destroyInstance(Object arg0) throws IllegalAccessException, InvocationTargetException {
 		}
 	}
-	
-	private void writeToResponse(String body,
-			HttpServletResponse response) {
+
+	private void writeToResponse(String body, HttpServletResponse response) {
 		try {
 			response.getWriter().println(body);
 		} catch (IOException e) {

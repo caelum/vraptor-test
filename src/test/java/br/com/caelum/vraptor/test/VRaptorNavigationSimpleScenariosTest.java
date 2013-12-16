@@ -61,6 +61,20 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 	}
 	
 	@Test
+	public void shouldCompileAndExecuteAJspf() {
+		VRaptorTestResult result = navigate().get("/test/test9").execute();	
+		String html = result.getResponseBody();
+		assertEquals("Hello world from a jspf", html);
+	}
+	
+	@Test
+	public void shouldCompileAndExecuteAJspWithIncludedJspf() {
+		VRaptorTestResult result = navigate().get("/test/test10").execute();	
+		String html = result.getResponseBody();			
+		assertEquals("Hello world from a jspfragment", html.trim());
+	}
+	
+	@Test
 	public void shouldNotExecuteJsp() {
 		VRaptorTestResult result = navigate().post("/test/test8").withoutJsp().execute();	
 		String html = result.getResponseBody();
