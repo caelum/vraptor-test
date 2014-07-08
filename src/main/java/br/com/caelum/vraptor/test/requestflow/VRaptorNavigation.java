@@ -1,11 +1,10 @@
 package br.com.caelum.vraptor.test.requestflow;
 
-import java.io.File;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
@@ -14,12 +13,14 @@ import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
 import br.com.caelum.vraptor.test.container.CdiContainer;
+import br.com.caelum.vraptor.test.hack.StandaloneServletContext;
 import br.com.caelum.vraptor.test.jspsupport.JspResolver;
 import br.com.caelum.vraptor.validator.Validator;
 
@@ -33,20 +34,20 @@ public class VRaptorNavigation {
 	@Inject	
 	@RequestScoped
 	private Instance<Validator> validator;
-	private MockServletContext context;
+	private MockServletContext context = new StandaloneServletContext();
 	private CdiContainer cdiContainer;
 	@Inject	
 	private JspResolver jspResolver;
 	
 	@PostConstruct
 	public void init() throws ServletException {
-		this.context = jspResolver.getServletContext();
 		BeanManager manager = CDI.current().getBeanManager();
 		AnnotatedType<VRaptor> type = manager.createAnnotatedType(VRaptor.class);
 		InjectionTarget<VRaptor> target = manager.createInjectionTarget(type);
 		CreationalContext<VRaptor> ctx = manager.createCreationalContext(null);
 		target.inject(filter, ctx);
-		filter.init(new MockFilterConfig(context));
+		MockFilterConfig cfg = new MockFilterConfig(context);
+		filter.init(cfg);
 	}
 	
 	public UserFlow start(){
