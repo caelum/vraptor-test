@@ -20,6 +20,7 @@ import org.springframework.mock.web.MockServletContext;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
 import br.com.caelum.vraptor.test.container.CdiContainer;
+import br.com.caelum.vraptor.test.hack.StandaloneServletContext;
 import br.com.caelum.vraptor.test.jspsupport.JspResolver;
 import br.com.caelum.vraptor.validator.Validator;
 
@@ -33,7 +34,7 @@ public class VRaptorNavigation {
 	@Inject	
 	@RequestScoped
 	private Instance<Validator> validator;
-	private MockServletContext context = new MockServletContext();
+	private MockServletContext context = new StandaloneServletContext();
 	private CdiContainer cdiContainer;
 	@Inject	
 	private JspResolver jspResolver;
@@ -45,7 +46,8 @@ public class VRaptorNavigation {
 		InjectionTarget<VRaptor> target = manager.createInjectionTarget(type);
 		CreationalContext<VRaptor> ctx = manager.createCreationalContext(null);
 		target.inject(filter, ctx);
-		filter.init(new MockFilterConfig(context));
+		MockFilterConfig cfg = new MockFilterConfig(context);
+		filter.init(cfg);
 	}
 	
 	public UserFlow start(){
