@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.enterprise.inject.Instance;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
@@ -32,7 +33,7 @@ import br.com.caelum.vraptor.validator.Validator;
 public class UserFlow {
 
 	private List<UserRequest<VRaptorTestResult>> flows = new ArrayList<>();
-	private MockServletContext context;
+	private ServletContext context;
 	protected CdiContainer cdiContainer;
 	private VRaptor filter;
 	private Instance<Result> result;
@@ -40,7 +41,7 @@ public class UserFlow {
 	private Instance<Validator> validator;
 	private JspParser jspParser;
 
-	public UserFlow(VRaptor filter, CdiContainer cdiContainer, MockServletContext context, Instance<Result> result,
+	public UserFlow(VRaptor filter, CdiContainer cdiContainer, ServletContext context, Instance<Result> result,
 			Instance<Validator> validator, JspResolver jsp) {
 		this.filter = filter;
 		this.cdiContainer = cdiContainer;
