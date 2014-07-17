@@ -11,6 +11,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.jboss.weld.environment.se.events.ContainerInitialized;
@@ -34,7 +35,8 @@ public class VRaptorNavigation {
 	@Inject	
 	@RequestScoped
 	private Instance<Validator> validator;
-	private MockServletContext context = new StandaloneServletContext();
+	@Inject
+	private ServletContext context;
 	private CdiContainer cdiContainer;
 	@Inject	
 	private JspResolver jspResolver;

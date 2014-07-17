@@ -10,11 +10,12 @@ https://github.com/caelum/vraptor-test/tree/vraptor3).
 
 Add to your pom:
 
+
 ```xml
 <dependency>
 	<groupId>br.com.caelum.vraptor</groupId>
 	<artifactId>vraptor-test</artifactId>
-	<version>2.0.0</version>
+	<version>4.0.0-SNAPSHOT</version>
 	<scope>test</scope>
 </dependency>
 ```
