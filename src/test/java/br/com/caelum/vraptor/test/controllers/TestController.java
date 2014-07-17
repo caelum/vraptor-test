@@ -120,8 +120,8 @@ public class TestController {
 	}
 	
 	@Get
-	public void servletContextTest() {
-		result.include("realPath", ctx.getRealPath("WEB-INF/jsp/test/test8.jsp"));
+	public void servletContextTest() {		
+		result.include("realPath", ctx.getRealPath(""));
 	}
 	
 	@Get
