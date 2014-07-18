@@ -6,6 +6,8 @@ This plugin currently works only with VRaptor 4.x versions. For support to
 VRaptor 3, check vraptor-test 1.x versions (being developed in vraptor3 branch:
 https://github.com/caelum/vraptor-test/tree/vraptor3).
 
+**Warning: this plugin works only with Java <= 7**
+
 # installing
 
 Add to your pom:
