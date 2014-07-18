@@ -5,3 +5,5 @@ target
 .settings
 jsp-compilation/
 
+.idea/
+*.iml
