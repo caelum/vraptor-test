@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 
-public class Parameters {
-	
-	private List<Parameter> list = new ArrayList<>();
+public class Parameters {	
+	private List<Parameter> parameters = new ArrayList<>();
+	private List<Parameter> headers = new ArrayList<>();
 	
 	private Parameters(Parameter parameter){
-		list.add(parameter);		
+		parameters.add(parameter);		
 	}
 	
 	public Parameters(){}
@@ -20,14 +20,21 @@ public class Parameters {
 	}
 
 	public Parameters add(String name, Object value) {
-		list.add(new Parameter(name, value.toString()));
+		parameters.add(new Parameter(name, value.toString()));
 		return this;
 	}
 
-	public void fill(MockHttpServletRequest request) {
-		for (Parameter param : list) {
-			request.addParameter(param.getName(),param.getValue());
-		}
+	public Parameters addHeader(String name, Object value) {
+		headers.add(new Parameter(name, value.toString()));
+		return this;
 	}
-
+	
+	public void fill(MockHttpServletRequest request) {
+		for (Parameter param : parameters) {
+			request.addParameter(param.getName(),param.getValue());
+		}		
+		for (Parameter param : headers) {
+			request.addHeader(param.getName(), param.getValue());
+		}		
+	}
 }
