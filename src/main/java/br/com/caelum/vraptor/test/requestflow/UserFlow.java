@@ -9,12 +9,8 @@ import java.util.List;
 
 import javax.enterprise.inject.Instance;
 import javax.servlet.RequestDispatcher;
-
-import javax.servlet.http.Cookie;
-
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -22,7 +18,6 @@ import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
@@ -114,10 +109,25 @@ public class UserFlow {
 			@Override
 			public VRaptorTestResult call(HttpSession session) {
 				LOG.debug("starting request to " + url);
-				request = new MockHttpServletRequest(context, httpMethod.toString(), url) {
+				final String localUrl;
+				final String query;
+				if(url.contains("?")){
+					String[] parts = url.split("\\?");
+					localUrl = parts[0];
+					query = parts[1];
+				} else {
+					localUrl = url;
+					query = "";
+				}
+				request = new MockHttpServletRequest(context, httpMethod.toString(), localUrl) {
 					@Override
 					public RequestDispatcher getRequestDispatcher(String path) {
 						return new VRaptorTestMockRequestDispatcher(path, jspParser);
+					}
+					
+					@Override
+					public String getQueryString() {
+						return query;
 					}
 				};
 				request.setCookies(cookies);

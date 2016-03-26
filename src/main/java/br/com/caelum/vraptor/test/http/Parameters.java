@@ -25,6 +25,13 @@ public class Parameters {
 	}
 
 	public void fill(MockHttpServletRequest request) {
+		if(!request.getQueryString().isEmpty()){			
+			for(String query : request.getQueryString().split("\\&")){
+				String[] parts = query.split("=");
+				request.addParameter(parts[0], parts[1]);
+			}
+		}
+
 		for (Parameter param : list) {
 			request.addParameter(param.getName(),param.getValue());
 		}

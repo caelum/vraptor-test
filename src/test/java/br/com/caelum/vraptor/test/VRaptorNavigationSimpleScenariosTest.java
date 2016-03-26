@@ -4,13 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import junit.framework.AssertionFailedError;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.caelum.vraptor.test.http.Parameters;
 import br.com.caelum.vraptor.test.models.Task;
+import junit.framework.AssertionFailedError;
 
 public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 
@@ -134,5 +133,12 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		result.wasStatus(200);
 		assertEquals(true, result.getObject("isEmpty"));
 	}
-	
+
+	@Test
+	public void shouldPassQueryString() {
+		String name = "someFieldName";
+		String value = "SomeValue4Field";
+		VRaptorTestResult result = navigate().get("/test/testQuery?"+ name + "=" + value).execute();
+		assertEquals(value, result.getObject(name));		
+	}	
 }

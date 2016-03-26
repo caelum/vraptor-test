@@ -37,6 +37,13 @@ public class TestController {
 	@Inject
 	private ServletContext ctx;
 	
+	@Get
+	public void testQuery(){
+		System.err.println(request.getQueryString());
+		String name = "someFieldName";
+		String value = request.getParameter(name);
+		result.include(name, value);
+	}
 	
 	public void test(){
 		result.include("name","vraptor");
