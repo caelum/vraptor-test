@@ -4,13 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import junit.framework.AssertionFailedError;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.caelum.vraptor.test.http.Parameters;
 import br.com.caelum.vraptor.test.models.Task;
+import junit.framework.AssertionFailedError;
 
 public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 
@@ -40,6 +39,16 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		Task task = result.getObject("task");
 		assertEquals(10,task.getDifficulty());
 		assertEquals("test",task.getDescription());
+	}
+
+	@Test
+	public void shouldPassObjectHeaders() {
+		String name = "Authorization";
+		String value = "Bearer 123";
+		VRaptorTestResult result = navigate().post("/test/test11",
+				new Parameters().addHeader(name, value)).execute();
+		assertEquals(value, result.getObject(name));
+		
 	}
 	
 	@Test
