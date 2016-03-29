@@ -42,6 +42,25 @@ This test case will execute a request to `/test/test` url in your application
 and return a `VRaptorTestResult` object. Note that this test will really execute the code of your
 controller.
 
+To add headers, sometimes for authentication, for example:
+```java
+@Test
+public void shouldPassObjectHeaders() {
+	String name = "Authorization";
+	String value = "Bearer 123";
+	VRaptorTestResult result = navigate().post("/test/test11", new Parameters().addHeader(name, value)).execute();
+}
+```
+This is the result:
+```http
+POST /test/test11 HTTP/1.1
+Host: http://myhost/test/test11
+Accept: application/json, text/javascript, */*; q=0.01
+Authorization: Bearer 123
+Referer: http://myhost/test/test11
+Accept-Encoding: gzip, deflate, sdch
+```
+
 The `VRaptorTestResult` object allow you to verify things that
 happened during the request:
 ```java

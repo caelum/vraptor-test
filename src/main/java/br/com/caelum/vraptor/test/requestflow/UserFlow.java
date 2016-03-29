@@ -181,5 +181,4 @@ public class UserFlow {
 		this.jspParser = new JspFakeParser();
 		return this;
 	}
-
 }
