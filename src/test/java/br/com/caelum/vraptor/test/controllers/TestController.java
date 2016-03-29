@@ -92,6 +92,13 @@ public class TestController {
 	}	
 	
 	@Post
+	public void test11(){
+		String name = "Authorization";
+		String token = request.getHeader(name);
+		result.include(name, token);
+	}
+	
+	@Post
 	public void withValidatorError() {
 		validator.add(new SimpleMessage("error", "error"));
 		validator.onErrorRedirectTo(this).test();

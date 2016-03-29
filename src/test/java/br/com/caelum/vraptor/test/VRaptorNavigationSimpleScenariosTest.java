@@ -40,6 +40,16 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		assertEquals(10,task.getDifficulty());
 		assertEquals("test",task.getDescription());
 	}
+
+	@Test
+	public void shouldPassObjectHeaders() {
+		String name = "Authorization";
+		String value = "Bearer 123";
+		VRaptorTestResult result = navigate().post("/test/test11",
+				new Parameters().addHeader(name, value)).execute();
+		assertEquals(value, result.getObject(name));
+		
+	}
 	
 	@Test
 	public void shouldKeepObjectsInSession() {
