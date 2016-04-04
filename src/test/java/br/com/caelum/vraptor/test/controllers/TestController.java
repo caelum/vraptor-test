@@ -1,5 +1,7 @@
 package br.com.caelum.vraptor.test.controllers;
 
+import static br.com.caelum.vraptor.view.Results.json;
+
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
@@ -37,6 +39,14 @@ public class TestController {
 	@Inject
 	private ServletContext ctx;
 	
+	@Get
+	public void testQuery(){
+		result.include("query", request.getQueryString());
+		String name = "someFieldName";
+		String value = request.getParameter(name);
+		result.include(name, value);
+		result.use(json());
+	}
 	
 	public void test(){
 		result.include("name","vraptor");
@@ -89,6 +99,7 @@ public class TestController {
 		String name = "Authorization";
 		String token = request.getHeader(name);
 		result.include(name, token);
+		result.use(json());
 	}
 	
 	@Post

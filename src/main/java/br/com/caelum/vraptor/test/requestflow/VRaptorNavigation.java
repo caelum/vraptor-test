@@ -4,7 +4,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
@@ -14,14 +13,11 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.springframework.mock.web.MockFilterConfig;
-import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
 import br.com.caelum.vraptor.test.container.CdiContainer;
-import br.com.caelum.vraptor.test.hack.StandaloneServletContext;
 import br.com.caelum.vraptor.test.jspsupport.JspResolver;
 import br.com.caelum.vraptor.validator.Validator;
 

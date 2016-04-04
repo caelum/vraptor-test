@@ -9,12 +9,8 @@ import java.util.List;
 
 import javax.enterprise.inject.Instance;
 import javax.servlet.RequestDispatcher;
-
-import javax.servlet.http.Cookie;
-
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -22,7 +18,6 @@ import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.VRaptor;
@@ -107,6 +102,9 @@ public class UserFlow {
 
 	private UserRequest<VRaptorTestResult> buildRequest(final String url, final HttpMethod httpMethod,
 			final Parameters parameters) {
+		final String[] splittedUrl = splitUrl(url);
+		final String urlWithoutQuery = splittedUrl[0];
+		final String query = splittedUrl[1];
 		return new UserRequest<VRaptorTestResult>() {
 			private Cookie[] cookies = new Cookie[0];
 			private MockHttpServletRequest request;
@@ -114,10 +112,15 @@ public class UserFlow {
 			@Override
 			public VRaptorTestResult call(HttpSession session) {
 				LOG.debug("starting request to " + url);
-				request = new MockHttpServletRequest(context, httpMethod.toString(), url) {
+				request = new MockHttpServletRequest(context, httpMethod.toString(), urlWithoutQuery) {
 					@Override
 					public RequestDispatcher getRequestDispatcher(String path) {
 						return new VRaptorTestMockRequestDispatcher(path, jspParser);
+					}
+					
+					@Override
+					public String getQueryString() {
+						return query;
 					}
 				};
 				request.setCookies(cookies);
@@ -136,8 +139,8 @@ public class UserFlow {
 					applicationError = e.getCause();
 					response.setStatus(500);
 				}
-				Result vraptorResult = (Result) ((TargetInstanceProxy) result.get()).getTargetInstance();
-				Validator vraptorValidator = (Validator) ((TargetInstanceProxy) validator.get()).getTargetInstance();
+				Result vraptorResult = (Result) ((TargetInstanceProxy<?>) result.get()).getTargetInstance();
+				Validator vraptorValidator = (Validator) ((TargetInstanceProxy<?>) validator.get()).getTargetInstance();
 				vRaptorTestResult = new VRaptorTestResult(vraptorResult, response, request, vraptorValidator);
 				vRaptorTestResult.setApplicationError(applicationError);
 				return vRaptorTestResult;
@@ -151,8 +154,7 @@ public class UserFlow {
 			@Override
 			public List<Cookie> getCookies() {
 				return new ArrayList<>(asList(firstNonNull(request.getCookies(), new Cookie[0])));
-			}
-			
+			}		
 		};
 	}
 
@@ -181,4 +183,11 @@ public class UserFlow {
 		this.jspParser = new JspFakeParser();
 		return this;
 	}
+
+	protected String[] splitUrl(String url) {
+	    if (!url.contains("?")) {
+	        return new String[]{url, ""};
+	    }
+	    return url.split("\\?");
+	}	
 }

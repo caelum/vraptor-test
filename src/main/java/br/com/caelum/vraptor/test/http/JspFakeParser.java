@@ -1,6 +1,5 @@
 package br.com.caelum.vraptor.test.http;
 
-import javax.enterprise.inject.Vetoed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
