@@ -3,12 +3,7 @@ package br.com.caelum.vraptor.test.requestflow;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.springframework.mock.web.MockHttpSession;
-
-import br.com.caelum.vraptor.test.jspsupport.JspResolver;
 
 /**
  * Represents interaction flow

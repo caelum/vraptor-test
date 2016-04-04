@@ -4,9 +4,6 @@ import static com.google.common.base.Objects.firstNonNull;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.fail;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +24,7 @@ import br.com.caelum.vraptor.validator.Validator;
 @Vetoed
 public class VRaptorTestResult {
 
-	private Result result;
+	//private Result result;
 	private Map<String, Object> values;
 	private MockHttpServletResponse response;
 	private MockHttpServletRequest request;
@@ -37,7 +34,7 @@ public class VRaptorTestResult {
 	public VRaptorTestResult(Result result, MockHttpServletResponse response, 
 			MockHttpServletRequest request, Validator validator) {
 		super();
-		this.result = result;
+		//this.result = result;
 		this.response = response;
 		this.request = request;
 		this.validator = validator;
@@ -60,7 +57,9 @@ public class VRaptorTestResult {
 	}
 	
 	public <T> T getObject(String key){
-		return (T) values.get(key);
+		@SuppressWarnings("unchecked")
+		T object = (T) values.get(key);
+		return object;
 	}
 
 	public HttpSession getCurrentSession() {

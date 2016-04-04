@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockRequestDispatcher;
 
@@ -18,7 +16,7 @@ import br.com.caelum.vraptor.http.VRaptorResponse;
 public class VRaptorTestMockRequestDispatcher extends MockRequestDispatcher {
 
 	private JspParser jspParser;
-	private Logger logger = LoggerFactory.getLogger(VRaptorTestMockRequestDispatcher.class);
+	//private Logger logger = LoggerFactory.getLogger(VRaptorTestMockRequestDispatcher.class);
 
 	public VRaptorTestMockRequestDispatcher(String resource,JspParser jspParser) {
 		super(resource);
@@ -29,7 +27,7 @@ public class VRaptorTestMockRequestDispatcher extends MockRequestDispatcher {
 	protected MockHttpServletResponse getMockHttpServletResponse(
 			ServletResponse response) {
 		if (response instanceof TargetInstanceProxy) {
-			VRaptorResponse testResponse = (VRaptorResponse) ((TargetInstanceProxy) response)
+			VRaptorResponse testResponse = (VRaptorResponse) ((TargetInstanceProxy<?>) response)
 					.getTargetInstance();
 			return super.getMockHttpServletResponse(testResponse);
 		}
