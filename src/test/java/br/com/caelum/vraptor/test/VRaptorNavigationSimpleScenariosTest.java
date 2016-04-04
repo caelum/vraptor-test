@@ -47,6 +47,7 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		String value = "Bearer 123";
 		VRaptorTestResult result = navigate().post("/test/test11",
 				new Parameters().addHeader(name, value)).execute();
+		result.wasStatus(200);
 		assertEquals(value, result.getObject(name));
 		
 	}
@@ -148,7 +149,10 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 	public void shouldPassQueryString() {
 		String name = "someFieldName";
 		String value = "SomeValue4Field";
-		VRaptorTestResult result = navigate().get("/test/testQuery?"+ name + "=" + value).execute();
-		assertEquals(value, result.getObject(name));		
+		String query = name + "=" + value;
+		VRaptorTestResult result = navigate().get("/test/testQuery?" + query).execute();
+		result.wasStatus(200);
+		assertEquals(value, result.getObject(name));
+		assertEquals(query, result.getObject("query"));
 	}	
 }
