@@ -43,13 +43,20 @@ public class Parameters {
 		for (Parameter param : headers) {
 			request.addHeader(param.getName(), param.getValue());
 		}
-		if(bytes != null && bytes.length > 0){
+		if(isContentfilled()){
 			request.setContent(bytes);
 		}
 	}
 
 	public Parameters setContent(byte[] bytes) {
+		if(isContentfilled()){
+			throw new IllegalStateException("Parameters#setContent was called second time!");
+		}
 		this.bytes = bytes;
 		return this;
+	}
+	
+	public Boolean isContentfilled(){
+		return bytes != null && bytes.length > 0;
 	}
 }
