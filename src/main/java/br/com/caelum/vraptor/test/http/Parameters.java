@@ -8,6 +8,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class Parameters {	
 	private List<Parameter> parameters = new ArrayList<>();
 	private List<Parameter> headers = new ArrayList<>();
+	private byte[] bytes = new byte[]{};
 	
 	private Parameters(Parameter parameter){
 		parameters.add(parameter);		
@@ -38,9 +39,17 @@ public class Parameters {
 		}
 		for (Parameter param : parameters) {
 			request.addParameter(param.getName(),param.getValue());
-		}		
+		}
 		for (Parameter param : headers) {
 			request.addHeader(param.getName(), param.getValue());
-		}		
+		}
+		if(bytes != null && bytes.length > 0){
+			request.setContent(bytes);
+		}
+	}
+
+	public Parameters setContent(byte[] bytes) {
+		this.bytes = bytes;
+		return this;
 	}
 }

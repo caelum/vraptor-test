@@ -42,6 +42,7 @@ public class UserFlow {
 	private boolean followRedirect;
 	private Instance<Validator> validator;
 	private JspParser jspParser;
+	private Parameters parameters;
 	private static Logger LOG = Logger.getLogger(UserFlow.class);
 
 	public UserFlow(VRaptor filter, CdiContainer cdiContainer, ServletContext context, Instance<Result> result,
@@ -95,6 +96,7 @@ public class UserFlow {
 	}
 
 	public UserFlow to(final String url, final HttpMethod httpMethod, final Parameters parameters) {
+		this.parameters = parameters;
 		flows.add(buildRequest(url, httpMethod, parameters));
 		return this;
 
@@ -168,6 +170,21 @@ public class UserFlow {
 
 	public UserFlow post(String url) {
 		return post(url, new Parameters());
+	}
+
+	public UserFlow addHeader(String name, Object value) {
+		parameters.addHeader(name, value);
+		return this;
+	}
+
+	public UserFlow addParameter(String name, Object value) {
+		parameters.add(name, value);
+		return this;
+	}
+
+	public UserFlow setContent(byte[] bytes) {
+		parameters.setContent(bytes);
+		return this;
 	}
 
 	public UserFlow post(String url, Parameters parameters) {

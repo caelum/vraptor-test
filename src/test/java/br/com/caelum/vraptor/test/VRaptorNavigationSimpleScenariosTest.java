@@ -34,8 +34,11 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 
 	@Test
 	public void shouldPassObjectParameter() {
-		VRaptorTestResult result = navigate().post("/test/test4",
-				Parameters.initWith("task.description", "test").add("task.difficulty", 10)).execute();
+		VRaptorTestResult result = navigate()
+									.post("/test/test4")
+									.addParameter("task.description", "test")
+									.addParameter("task.difficulty", 10)
+									.execute();
 		Task task = result.getObject("task");
 		assertEquals(10,task.getDifficulty());
 		assertEquals("test",task.getDescription());
@@ -45,11 +48,12 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 	public void shouldPassObjectHeaders() {
 		String name = "Authorization";
 		String value = "Bearer 123";
-		VRaptorTestResult result = navigate().post("/test/test11",
-				new Parameters().addHeader(name, value)).execute();
+		VRaptorTestResult result = navigate()
+									.post("/test/test11")
+									.addHeader(name, value)
+									.execute();
 		result.wasStatus(200);
-		assertEquals(value, result.getObject(name));
-		
+		assertEquals(value, result.getObject(name));		
 	}
 	
 	@Test
@@ -154,5 +158,19 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		result.wasStatus(200);
 		assertEquals(value, result.getObject(name));
 		assertEquals(query, result.getObject("query"));
+	}	
+	
+	@Test
+	public void shouldJsonConsumes() {
+		String value1 = "123";
+		String value2 = "abc";
+		String json = String.format("{\"value2\":\"%s\",\"value1\":\"%s\"}", value2, value1);
+		VRaptorTestResult result = navigate()
+									.post("/test/testJson")
+									.addHeader("Content-Type", "application/json; charset=utf-8")
+									.setContent(json.getBytes())
+									.execute();
+		result.wasStatus(200);
+		assertEquals(json, result.getResponseBody());
 	}	
 }

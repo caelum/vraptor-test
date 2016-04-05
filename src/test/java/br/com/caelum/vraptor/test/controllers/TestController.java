@@ -2,6 +2,8 @@ package br.com.caelum.vraptor.test.controllers;
 
 import static br.com.caelum.vraptor.view.Results.json;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
@@ -14,6 +16,7 @@ import javax.validation.Valid;
 
 import org.junit.Ignore;
 
+import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
@@ -46,6 +49,15 @@ public class TestController {
 		String value = request.getParameter(name);
 		result.include(name, value);
 		result.use(json());
+	}
+	
+	@Post
+	@Consumes(value = "application/json")
+	public void testJson(String value1, String value2){
+		Map<String, String> object = new HashMap<String, String>();
+		object.put("value1", value1);
+		object.put("value2", value2);
+		result.use(json()).withoutRoot().from(object).serialize();
 	}
 	
 	public void test(){
