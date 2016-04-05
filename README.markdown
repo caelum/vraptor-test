@@ -49,9 +49,9 @@ public void shouldPassObjectHeaders() {
 	String name = "Authorization";
 	String value = "Bearer 123";
 	VRaptorTestResult result = navigate()
-								.post("/test/test11")
-								.addHeader(name, value)
-								.execute();
+					.post("/test/test11")
+					.addHeader(name, value)
+					.execute();
 }
 ```
 This is the result:
@@ -90,10 +90,10 @@ You can also add parameters to be sent in the request:
 @Test
 public void shouldIncludeAtrributeInResult() throws Exception {
 	VRaptorTestResult result = navigate()
-								.post("/tasks")
-								.addParameter("task.description", "Task description")
-								.addParameter("task.name", "Task name")
-	    						.execute();
+					.post("/tasks")
+					.addParameter("task.description", "Task description")
+					.addParameter("task.name", "Task name")
+					.execute();
 	Task task = result.getObject("task"));
 	assertEquals("Task description", task.getDescription());
 	assertEquals("Task name", task.getName());
