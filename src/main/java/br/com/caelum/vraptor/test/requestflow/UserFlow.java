@@ -182,8 +182,8 @@ public class UserFlow {
 		return this;
 	}
 
-	public UserFlow setContent(byte[] bytes) {
-		parameters.setContent(bytes);
+	public UserFlow setContent(String content) {
+		parameters.setContent(content);
 		return this;
 	}
 

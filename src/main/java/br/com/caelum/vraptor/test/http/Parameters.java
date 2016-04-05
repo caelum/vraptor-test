@@ -8,7 +8,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class Parameters {	
 	private List<Parameter> parameters = new ArrayList<>();
 	private List<Parameter> headers = new ArrayList<>();
-	private byte[] bytes = new byte[]{};
+	private String content = "";
 	
 	private Parameters(Parameter parameter){
 		parameters.add(parameter);		
@@ -44,19 +44,19 @@ public class Parameters {
 			request.addHeader(param.getName(), param.getValue());
 		}
 		if(isContentfilled()){
-			request.setContent(bytes);
+			request.setContent(content.getBytes());
 		}
 	}
 
-	public Parameters setContent(byte[] bytes) {
+	public Parameters setContent(String content) {
 		if(isContentfilled()){
 			throw new IllegalStateException("Parameters#setContent was called second time!");
 		}
-		this.bytes = bytes;
+		this.content = content;
 		return this;
 	}
 	
 	public Boolean isContentfilled(){
-		return bytes != null && bytes.length > 0;
+		return content != null && !content.isEmpty();
 	}
 }

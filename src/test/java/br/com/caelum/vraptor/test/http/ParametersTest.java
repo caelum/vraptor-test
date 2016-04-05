@@ -6,12 +6,12 @@ public class ParametersTest {
 
 	@Test
 	public void testSetContentOneTime() {
-		new Parameters().setContent("2134".getBytes());
+		new Parameters().setContent("2134");
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testSetContentTwice() {
-		new Parameters().setContent("123".getBytes()).setContent("abc".getBytes());
+		new Parameters().setContent("123").setContent("abc");
 	}
 
 }

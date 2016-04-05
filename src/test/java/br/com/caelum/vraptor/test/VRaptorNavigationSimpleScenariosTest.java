@@ -168,7 +168,7 @@ public class VRaptorNavigationSimpleScenariosTest extends VRaptorIntegration {
 		VRaptorTestResult result = navigate()
 									.post("/test/testJson")
 									.addHeader("Content-Type", "application/json; charset=utf-8")
-									.setContent(json.getBytes())
+									.setContent(json)
 									.execute();
 		result.wasStatus(200);
 		assertEquals(json, result.getResponseBody());
