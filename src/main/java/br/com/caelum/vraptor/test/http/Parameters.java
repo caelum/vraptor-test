@@ -50,7 +50,7 @@ public class Parameters {
 
 	public Parameters setContent(String content) {
 		if(isContentfilled()){
-			throw new IllegalStateException("Parameters#setContent was called second time!");
+			throw new IllegalStateException("content has already been filled with" + this.content);
 		}
 		this.content = content;
 		return this;
