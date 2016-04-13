@@ -8,6 +8,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class Parameters {	
 	private List<Parameter> parameters = new ArrayList<>();
 	private List<Parameter> headers = new ArrayList<>();
+	private String content = "";
 	
 	private Parameters(Parameter parameter){
 		parameters.add(parameter);		
@@ -38,9 +39,24 @@ public class Parameters {
 		}
 		for (Parameter param : parameters) {
 			request.addParameter(param.getName(),param.getValue());
-		}		
+		}
 		for (Parameter param : headers) {
 			request.addHeader(param.getName(), param.getValue());
-		}		
+		}
+		if(isContentfilled()){
+			request.setContent(content.getBytes());
+		}
+	}
+
+	public Parameters setContent(String content) {
+		if(isContentfilled()){
+			throw new IllegalStateException("content has already been filled with" + this.content);
+		}
+		this.content = content;
+		return this;
+	}
+	
+	public Boolean isContentfilled(){
+		return content != null && !content.isEmpty();
 	}
 }

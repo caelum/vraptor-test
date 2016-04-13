@@ -17,7 +17,7 @@ Add to your pom:
 <dependency>
 	<groupId>br.com.caelum.vraptor</groupId>
 	<artifactId>vraptor-test</artifactId>
-	<version>4.0.0-SNAPSHOT</version>
+	<version>4.0.1-SNAPSHOT</version>
 	<scope>test</scope>
 </dependency>
 ```
@@ -48,7 +48,10 @@ To add headers, sometimes for authentication, for example:
 public void shouldPassObjectHeaders() {
 	String name = "Authorization";
 	String value = "Bearer 123";
-	VRaptorTestResult result = navigate().post("/test/test11", new Parameters().addHeader(name, value)).execute();
+	VRaptorTestResult result = navigate()
+					.post("/test/test11")
+					.addHeader(name, value)
+					.execute();
 }
 ```
 This is the result:
@@ -86,9 +89,11 @@ You can also add parameters to be sent in the request:
 ```java
 @Test
 public void shouldIncludeAtrributeInResult() throws Exception {
-	VRaptorTestResult result = navigate().post("/tasks", 
-	    Parameters.initWith("task.description", "Task description").add("task.name", "Task name")
-	    .execute();
+	VRaptorTestResult result = navigate()
+					.post("/tasks")
+					.addParameter("task.description", "Task description")
+					.addParameter("task.name", "Task name")
+					.execute();
 	Task task = result.getObject("task"));
 	assertEquals("Task description", task.getDescription());
 	assertEquals("Task name", task.getName());
