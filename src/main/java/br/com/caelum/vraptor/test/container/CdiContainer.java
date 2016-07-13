@@ -15,14 +15,9 @@ public class CdiContainer {
         private Contexts contexts;
     	
     	public CdiContainer(Weld weld, WeldContainer weldContainer, Contexts contexts) {
-    		this(weld, weldContainer);
-    		this.contexts = contexts;
-    	}
-
-    	public CdiContainer(Weld weld, WeldContainer weldContainer) {
-    		super();
     		this.weld = weld;
     		this.weldContainer = weldContainer;
+    		this.contexts = contexts;
     	}
 
     	public CdiContainer() {
