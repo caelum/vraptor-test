@@ -13,12 +13,27 @@ public class CdiContainer {
         private Weld weld;
         private WeldContainer weldContainer;
         private Contexts contexts;
+    	
+    	public CdiContainer(Weld weld, WeldContainer weldContainer, Contexts contexts) {
+    		this.weld = weld;
+    		this.weldContainer = weldContainer;
+    		this.contexts = contexts;
+    	}
 
-        public void start() {
-                weld = new Weld();
-                weldContainer = weld.initialize();
-                contexts = getContexts();
-        }
+    	public CdiContainer() {
+    	}
+
+    	public void start() {
+    		if (weld == null) {
+    			weld = new Weld();
+    		}
+    		if (weldContainer == null) {
+    			weldContainer = weld.initialize();
+    		}
+    		if (contexts == null) {
+    			contexts = getContexts();
+    		}
+    	}
         
         public BeanManager getBeanManager(){
                 return weldContainer.getBeanManager();
