@@ -24,7 +24,7 @@ Ou ainda simplesmente copie os jars necessários para seu path.
 Crie um teste que inicia o servidor uma única vez:
 
 	public interface Server {
-		private static final RealVRaptor VRAPTOR = new RealVRaptor(new File("src/main/webapp")); 
+		static final RealVRaptor VRAPTOR = new RealVRaptor(new File("src/main/webapp")); 
 	}
 	
 	public class IndexTest implements Server {
