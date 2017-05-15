@@ -55,8 +55,8 @@ public class TestController {
 	@Consumes(value = "application/json")
 	public void testJson(String value1, String value2){
 		Map<String, String> object = new HashMap<String, String>();
-		object.put("value1", value1);
 		object.put("value2", value2);
+		object.put("value1", value1);
 		result.use(json()).withoutRoot().from(object).serialize();
 	}
 	
