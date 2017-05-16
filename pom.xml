@@ -120,7 +120,7 @@
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jasper</artifactId>
-			<version>7.0.20</version>
+			<version>7.0.77</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>tomcat-servlet-api</artifactId>

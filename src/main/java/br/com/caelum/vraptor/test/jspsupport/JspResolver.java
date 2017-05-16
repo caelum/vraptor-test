@@ -142,6 +142,11 @@ public class JspResolver {
 		@Override
 		public void destroyInstance(Object arg0) throws IllegalAccessException, InvocationTargetException {
 		}
+
+		@Override
+		public Object newInstance(Class<?> clazz) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException {
+			return null;
+		}
 	}
 
 	private void writeToResponse(String body, HttpServletResponse response) {
