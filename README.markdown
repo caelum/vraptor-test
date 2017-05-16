@@ -1,4 +1,6 @@
-## vraptor-test
+# vraptor-test 
+
+[![Build Status](https://travis-ci.org/caelum/vraptor-test.svg?branch=master)](https://travis-ci.org/caelum/vraptor-test)
 
 A VRaptor plugin that allows you to quickly create integration or system tests. 
 
