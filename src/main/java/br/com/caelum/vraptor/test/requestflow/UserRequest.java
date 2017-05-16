@@ -15,7 +15,6 @@ public interface UserRequest<T> {
 	/**
 	 * 
 	 * @param session shared session between requests 
-	 * @param jsp 
 	 * @return
 	 */
 	public T call(HttpSession session);
