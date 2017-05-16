@@ -29,7 +29,7 @@ public class VRaptorTestResult {
 	private MockHttpServletResponse response;
 	private MockHttpServletRequest request;
 	private Throwable applicationError;
-	private Validator validator;
+	private Boolean isValid;
 
 	public VRaptorTestResult(Result result, MockHttpServletResponse response, 
 			MockHttpServletRequest request, Validator validator) {
@@ -37,7 +37,7 @@ public class VRaptorTestResult {
 		//this.result = result;
 		this.response = response;
 		this.request = request;
-		this.validator = validator;
+		this.isValid = !validator.hasErrors();
 		this.values = result.included();
 	}
 	
@@ -94,20 +94,20 @@ public class VRaptorTestResult {
 		}
 		return this;
 	}
-
+	
 	public void setApplicationError(Throwable applicationError) {
 		this.applicationError = applicationError;
 	}
 
 	public VRaptorTestResult isValid() {
-		if (validator.hasErrors()) {
+		if (!isValid) {
 			fail("Found validation errors");
 		}
 		return this;
 	}
 	
 	public VRaptorTestResult isInvalid() {
-		if (validator.hasErrors()) {
+		if (isValid) {
 			fail("Validation errors not found");
 		}
 		return this;

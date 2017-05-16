@@ -2,7 +2,7 @@ package br.com.caelum.vraptor.test.controllers;
 
 import static br.com.caelum.vraptor.view.Results.json;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -54,7 +54,7 @@ public class TestController {
 	@Post
 	@Consumes(value = "application/json")
 	public void testJson(String value1, String value2){
-		Map<String, String> object = new HashMap<String, String>();
+		Map<String, String> object = new LinkedHashMap<String, String>();
 		object.put("value2", value2);
 		object.put("value1", value1);
 		result.use(json()).withoutRoot().from(object).serialize();
