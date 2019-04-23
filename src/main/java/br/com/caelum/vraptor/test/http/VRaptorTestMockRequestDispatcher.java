@@ -6,33 +6,17 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockRequestDispatcher;
-
-import br.com.caelum.vraptor.http.VRaptorResponse;
 
 @Vetoed
 public class VRaptorTestMockRequestDispatcher extends MockRequestDispatcher {
 
 	private JspParser jspParser;
-	//private Logger logger = LoggerFactory.getLogger(VRaptorTestMockRequestDispatcher.class);
 
 	public VRaptorTestMockRequestDispatcher(String resource,JspParser jspParser) {
 		super(resource);
 		this.jspParser = jspParser;
-	}
-
-	@Override
-	protected MockHttpServletResponse getMockHttpServletResponse(
-			ServletResponse response) {
-		if (response instanceof TargetInstanceProxy) {
-			VRaptorResponse testResponse = (VRaptorResponse) ((TargetInstanceProxy<?>) response)
-					.getTargetInstance();
-			return super.getMockHttpServletResponse(testResponse);
-		}
-		return super.getMockHttpServletResponse(response);
-
 	}
 	
 	@Override

@@ -160,7 +160,7 @@ public class TestController {
 	@Get
 	public void emptyCookies() {
 		Cookie[] cookies = request.getCookies();
-		result.include("isEmpty", cookies.length == 0);
+		result.include("isEmpty", cookies == null || cookies.length == 0);
 		result.nothing();
 	}
 	
