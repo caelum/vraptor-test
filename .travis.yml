@@ -1,8 +1,9 @@
 language: java
 jdk:
-- openjdk7
+- oraclejdk8
 cache:
   directories:
     - ~/.m2/repository
 script: 
-- mvn clean package
+- mvn clean test -Pcdi-2
+- mvn clean package -Pcdi-1

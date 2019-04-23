@@ -14,7 +14,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -141,8 +140,8 @@ public class UserFlow {
 					applicationError = e.getCause();
 					response.setStatus(500);
 				}
-				Result vraptorResult = (Result) ((TargetInstanceProxy<?>) result.get()).getTargetInstance();
-				Validator vraptorValidator = (Validator) ((TargetInstanceProxy<?>) validator.get()).getTargetInstance();
+				Result vraptorResult = result.get();
+				Validator vraptorValidator = validator.get();
 				vRaptorTestResult = new VRaptorTestResult(vraptorResult, response, request, vraptorValidator);
 				vRaptorTestResult.setApplicationError(applicationError);
 				return vRaptorTestResult;
